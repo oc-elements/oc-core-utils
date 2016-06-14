@@ -1,0 +1,15 @@
+<script>
+  window.OC = window.OC || {};
+  window.OC.Behaviours = window.OC.Behaviours || {};
+  OC.Behaviours.ApiConsumer = {
+
+    _setPropertyResponse: function(property, response) {
+      this.set(property, response.response);
+    },
+
+    _setPropertyResponseResults: function(property, response) {
+      this.set(property, response.response.results);
+    },
+
+  };
+</script>
