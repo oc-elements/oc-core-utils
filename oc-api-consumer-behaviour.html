@@ -11,5 +11,8 @@
       this.set(property, response.response.results);
     },
 
+    _setPropertyMappedResponse: function(property, mappingMethod, response) {
+      this.set(property, mappingMethod(response.response));
+    }
   };
 </script>
