@@ -2,9 +2,29 @@
 
   window.OC = window.OC || {};
 
+  /**
+   * The client ID to use when making API requests (X-Ordercloud-Organisation)
+   */
   OC.clientId = OC.clientId || 'b241bebc36530fe8ebd4a499323e605d';
+
+  /**
+   * The API host to use when making requests.
+   */
   OC.apiHost = OC.apiHost || 'https://test-api.ordercloud.com/';
+
+  /**
+   * The client ID to use when authenticating
+   */
+  OC.authClientId = OC.authClientId || 'b241bebc36530fe8ebd4a499323e605d';
+
+  /**
+   * The Auth host to use when authenticating
+   */
   OC.authHost = OC.authHost || 'https://test-auth.ordercloud.com/';
+
+  /**
+   * The user authentication token (Bearer|JWT)
+   */
   OC.token = OC.token || null;
 
 </script>
