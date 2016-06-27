@@ -25,6 +25,7 @@
       request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.token;
       request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.clientId;
       var ironRequest = request.generateRequest();
+      request.headers = {};
       return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
     }
 
