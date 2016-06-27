@@ -6,6 +6,7 @@
         --muted-color: #666666;
         --secondary-color: black;
         --primary-color-dark: #3a3f51;
+        --default-primary-color: var(--primary-color);
 
         --app-drawer-content-container: {
           background-color: var(--primary-color-dark);
@@ -21,8 +22,28 @@
         background-color: var(--primary-color);
         color: #fff;
       }
+      app-header app-toolbar {
+        z-index: 2;
+      }
+      app-drawer app-toolbar iron-icon {
+        --iron-icon-height: 46px;
+        --iron-icon-width: 46px;
+        margin-right: 0.6em;
+      }
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
+      }
+      #drawer::after {
+        position: absolute;
+        right: -5px;
+        bottom: 0;
+        top: 184px;
+        width: 5px;
+        height: 100%;
+        content: "";
+        transition: opacity 0.4s;
+        pointer-events: none;
+        box-shadow: inset 5px 0px 6px -3px rgba(0, 0, 0, 0.4);
       }
       app-drawer app-toolbar {
         color: #fff;
@@ -54,6 +75,9 @@
       }
       .drawer-list a.subroute {
         padding-left: 32px;
+      }
+      #toast[drawer-opened] {
+        margin-left: 270px;
       }
       oc-organisation-picker {
         --paper-dropdown-menu-icon: {
