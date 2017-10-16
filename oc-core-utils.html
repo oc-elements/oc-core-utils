@@ -4,10 +4,7 @@
  * @polymer
  * @mixinFunction
  */
-if(typeof (WebComponentsReadyLoaded) === "undefined") WebComponentsReadyLoaded = Promise.resolve();
-    WebComponentsReadyLoaded.then(function() {
-    window.Ordercloud = window.Ordercloud || {};
-    const Ordercloud.ApiMixin = Polymer.dedupingMixin((superclass) =>
+    const ApiMixin = Polymer.dedupingMixin((superclass) =>
 
     /*
          * @polymer
@@ -125,6 +122,5 @@ if(typeof (WebComponentsReadyLoaded) === "undefined") WebComponentsReadyLoaded =
         }
     };
     )
-}
 
 </script>
