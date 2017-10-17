@@ -1,126 +1,129 @@
+<link rel="import" href="../iron-ajax/iron-request.html">
+<iron-request id="xhr"></iron-request>
 <script>
     /*
  * Ordercloud API Mixin that allows communicating with API.
  * @polymer
  * @mixinFunction
  */
-    const ApiMixin = Polymer.dedupingMixin((superclass) =>
+    Ordercloud = window.Ordercloud || { };
+    Ordercloud.ApiMixin = Polymer.dedupingMixin((superclass) =>
 
-    /*
-         * @polymer
-         * @mixinClass
-         */
-    class OCApi extends superclass {
-        constructor() {
-            super();
-            /**
-             * The configuration values
-             *
-             * This can be overwritten in oc-core.html . oc-core-html needs to be above the mixin import
+        /*
+             * @polymer
+             * @mixinClass
              */
-
-            window.OC = window.OC || {};
-
-            /**
-             * The client ID to use when making API requests (X-Ordercloud-Organisation)
-             */
-            OC.clientId = OC.clientId || null;
-
-            /**
-             * The API host to use when making requests.
-             */
-            OC.apiHost = OC.apiHost || 'https://test-api.ordercloud.com/';
-
-            /**
-             * The client ID to use when authenticating
-             */
-            OC.authClientId = OC.authClientId || null;
-
-            /**
-             * The Auth host to use when authenticating
-             */
-            OC.authHost = OC.authHost || 'https://test-auth.ordercloud.com/';
-
-            /**
-             * The user authentication token (Bearer|JWT)
-             */
-            OC.token = OC.token || null;
-
-            /**
-             * The user id to use when making requests
-             */
-            OC.userId = OC.userId || null;
-        }
-
-        static get properties() {
-            return {
+        class OCApi extends superclass {
+            constructor() {
+                super();
                 /**
-                 * HTTP error codes for calls
+                 * The configuration values
+                 *
+                 * This can be overwritten in oc-core.html . oc-core-html needs to be above the mixin import
                  */
-                _errorCodes: {
-                    type: Array,
-                    readOnly: true,
-                    value: [
-                        {"key": 400, "text": "Bad Request"},
-                        {"key": 401, "text": "Unauthorized"},
-                        {"key": 402, "text": "Payment Required"},
-                        {"key": 403, "text": "Forbidden"},
-                        {"key": 404, "text": "Not Found"},
-                        {"key": 405, "text": "Method Not Allowed"},
-                        {"key": 406, "text": "Not Acceptable"},
-                        {"key": 408, "text": "Request Timeout"},
-                        {"key": 409, "text": "Conflict"},
-                        {"key": 410, "text": "Gone"},
-                        {"key": 411, "text": "Length Required"},
-                        {"key": 412, "text": "Precondition Failed"},
-                        {"key": 413, "text": "Payload Too Large"},
-                        {"key": 414, "text": "URI Too Long"},
-                        {"key": 415, "text": "Unsupported Media Type"},
-                        {"key": 416, "text": "Range Not Satisfiable"},
-                        {"key": 417, "text": "Expectation Failed"},
-                        {"key": 422, "text": "Unprocessable Entity"},
-                        {"key": 423, "text": "Locked"},
-                        {"key": 424, "text": "Failed Dependency"},
-                        {"key": 426, "text": "Upgrade Required"},
-                        {"key": 428, "text": "Precondition Required"},
-                        {"key": 429, "text": "Too Many Requests"},
-                        {"key": 431, "text": "Request Header Fields Too Large"},
-                        {"key": 451, "text": "Unavailable For Legal Reasons"},
-                        {"key": 500, "text": "Internal Server Error"},
-                        {"key": 501, "text": "Not Implemented"},
-                        {"key": 502, "text": "Bad Gateway"},
-                        {"key": 503, "text": "Service Unavailable"},
-                        {"key": 504, "text": "Gateway Time-out"},
-                        {"key": 505, "text": "HTTP Version Not Supported"},
-                        {"key": 506, "text": "Variant Also Negotiates"}
-                    ]
+
+                window.OC = window.OC || {};
+
+                /**
+                 * The client ID to use when making API requests (X-Ordercloud-Organisation)
+                 */
+                OC.clientId = OC.clientId || null;
+
+                /**
+                 * The API host to use when making requests.
+                 */
+                OC.apiHost = OC.apiHost || 'https://test-api.ordercloud.com/';
+
+                /**
+                 * The client ID to use when authenticating
+                 */
+                OC.authClientId = OC.authClientId || null;
+
+                /**
+                 * The Auth host to use when authenticating
+                 */
+                OC.authHost = OC.authHost || 'https://test-auth.ordercloud.com/';
+
+                /**
+                 * The user authentication token (Bearer|JWT)
+                 */
+                OC.token = OC.token || null;
+
+                /**
+                 * The user id to use when making requests
+                 */
+                OC.userId = OC.userId || null;
+            }
+
+            static get properties() {
+                return {
+                    /**
+                     * HTTP error codes for calls
+                     */
+                    _errorCodes: {
+                        type: Array,
+                        readOnly: true,
+                        value: [
+                            {"key": 400, "text": "Bad Request"},
+                            {"key": 401, "text": "Unauthorized"},
+                            {"key": 402, "text": "Payment Required"},
+                            {"key": 403, "text": "Forbidden"},
+                            {"key": 404, "text": "Not Found"},
+                            {"key": 405, "text": "Method Not Allowed"},
+                            {"key": 406, "text": "Not Acceptable"},
+                            {"key": 408, "text": "Request Timeout"},
+                            {"key": 409, "text": "Conflict"},
+                            {"key": 410, "text": "Gone"},
+                            {"key": 411, "text": "Length Required"},
+                            {"key": 412, "text": "Precondition Failed"},
+                            {"key": 413, "text": "Payload Too Large"},
+                            {"key": 414, "text": "URI Too Long"},
+                            {"key": 415, "text": "Unsupported Media Type"},
+                            {"key": 416, "text": "Range Not Satisfiable"},
+                            {"key": 417, "text": "Expectation Failed"},
+                            {"key": 422, "text": "Unprocessable Entity"},
+                            {"key": 423, "text": "Locked"},
+                            {"key": 424, "text": "Failed Dependency"},
+                            {"key": 426, "text": "Upgrade Required"},
+                            {"key": 428, "text": "Precondition Required"},
+                            {"key": 429, "text": "Too Many Requests"},
+                            {"key": 431, "text": "Request Header Fields Too Large"},
+                            {"key": 451, "text": "Unavailable For Legal Reasons"},
+                            {"key": 500, "text": "Internal Server Error"},
+                            {"key": 501, "text": "Not Implemented"},
+                            {"key": 502, "text": "Bad Gateway"},
+                            {"key": 503, "text": "Service Unavailable"},
+                            {"key": 504, "text": "Gateway Time-out"},
+                            {"key": 505, "text": "HTTP Version Not Supported"},
+                            {"key": 506, "text": "Variant Also Negotiates"}
+                        ]
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            _normalizeError (request) {
+                if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
+                    throw new ExpiredTokenError();
                 }
-            };
-        }
+                if (request.xhr.response && 'message' in request.xhr.response) {
+                    throw new Error(request.xhr.response.message);
+                }
 
-        ready() {
-            super.ready();
-        }
-
-        _normalizeError = function (request) {
-            if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
-                throw new ExpiredTokenError();
-            }
-            if (request.xhr.response && 'message' in request.xhr.response) {
-                throw new Error(request.xhr.response.message);
+                throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
             }
 
-            throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text)
-        };
-
-        _generateRequest = function (request) {
-            request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.token;
-            request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.clientId;
-            var ironRequest = request.generateRequest();
-            request.headers = {};
-            return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+            _generateRequest (request) {
+                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.token;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.clientId;
+                var ironRequest = request.generateRequest();
+                request.headers = {};
+                return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+            }
         }
-    };
     )
 
 </script>
