@@ -124,6 +124,8 @@
                 return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
             }
         }
-    )
+    );
+    function ExpiredTokenError() {}
+    ExpiredTokenError.prototype = Object.create(Error.prototype);
 
 </script>
