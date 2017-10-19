@@ -105,6 +105,10 @@
                 super.ready();
             }
 
+            _url(uri) {
+                return OC.apiHost + 'resource/' + uri;
+            }
+
             _normalizeError (request) {
                 if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
                     throw new ExpiredTokenError();
@@ -125,6 +129,7 @@
             }
         }
     );
+
     function ExpiredTokenError() {}
     ExpiredTokenError.prototype = Object.create(Error.prototype);
 
