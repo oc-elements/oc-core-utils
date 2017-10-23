@@ -16,43 +16,6 @@
         class OCApi extends superclass {
             constructor() {
                 super();
-                /**
-                 * The configuration values
-                 *
-                 * This can be overwritten in oc-core.html . oc-core-html needs to be above the mixin import
-                 */
-
-                window.OC = window.OC || {};
-
-                /**
-                 * The client ID to use when making API requests (X-Ordercloud-Organisation)
-                 */
-                OC.clientId = OC.clientId || null;
-
-                /**
-                 * The API host to use when making requests.
-                 */
-                OC.apiHost = OC.apiHost || 'https://test-api.ordercloud.com/';
-
-                /**
-                 * The client ID to use when authenticating
-                 */
-                OC.authClientId = OC.authClientId || null;
-
-                /**
-                 * The Auth host to use when authenticating
-                 */
-                OC.authHost = OC.authHost || 'https://test-auth.ordercloud.com/';
-
-                /**
-                 * The user authentication token (Bearer|JWT)
-                 */
-                OC.token = OC.token || null;
-
-                /**
-                 * The user id to use when making requests
-                 */
-                OC.userId = OC.userId || null;
             }
 
             static get properties() {
