@@ -75,7 +75,7 @@
              * @private
              */
             _generateUrl(uri) {
-                return OC.apiHost + 'resource/' + uri;
+                return OC.context.apiHostUrl + 'resource/' + uri;
             }
 
             _normalizeError (request) {
@@ -90,8 +90,8 @@
             }
 
             _generateRequest (request) {
-                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.clientId;
+                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.identity.token;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.identity.clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));

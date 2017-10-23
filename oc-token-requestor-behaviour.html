@@ -30,14 +30,15 @@
              *Requests a token from the auth serverwith implicit grant type
              */
             _requestImplicitGrant() {
-                if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri) {
+                if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri && OC.context.authClientId) {
                     this._save('post-auth-page', window.location.href);
                     window.location = [
-                        OC.context.authHostUrl, 'oauth/implicit?response_type=token&client_id=', OC.authClientId,
-                        '&redirect_uri=', encodeURIComponent(OC.redirectUrl)
+                        OC.context.authHostUrl, 'oauth/implicit?response_type=token&client_id=', OC.context.authClientId,
+                        '&redirect_uri=', encodeURIComponent(OC.context.tokenRedirectUri)
                     ].join('');
                 } else {
-                    throw 'Core components not configured. Please initialise oc-config element before attempting authorisation.'
+                    console.error('123Core components not configured. Please initialise oc-config element before attempting authorisation.');
+
                 }
             }
 
