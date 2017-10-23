@@ -1,0 +1,64 @@
+<link rel="import" href="../iron-ajax/iron-request.html">
+<iron-request id="xhr"></iron-request>
+<script>
+    /*
+ * Ordercloud API Mixin that allows communicating with API.
+ * @polymer
+ * @mixinFunction
+ */
+    Ordercloud = window.Ordercloud || { };
+    Ordercloud.TokenRequestor = Polymer.dedupingMixin((superclass) =>
+
+        /*
+             * @polymer
+             * @mixinClass
+             */
+        class TokenRequestor extends superclass {
+            constructor() {
+                super();
+            }
+
+            static get properties() {
+                return {};
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            /**
+             *Requests a token from the auth serverwith implicit grant type
+             */
+            _requestImplicitGrant() {
+                if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri) {
+                    this._save('post-auth-page', window.location.href);
+                    window.location = [
+                        OC.context.authHostUrl, 'oauth/implicit?response_type=token&client_id=', OC.authClientId,
+                        '&redirect_uri=', encodeURIComponent(OC.redirectUrl)
+                    ].join('');
+                } else {
+                    throw 'Core components not configured. Please initialise oc-config element before attempting authorisation.'
+                }
+            }
+
+            /**
+             * Saves the value to localStorage.
+             * If `value` is null or undefined, deletes localStorage.
+             */
+            _save(key, value) {
+                try {
+                    if (value === null || value === undefined) {
+                        window.localStorage.removeItem(key);
+                    } else {
+                        window.localStorage.setItem(key, /** @type {string} */ (value));
+                    }
+                }
+                catch(ex) {
+                    // Happens in Safari incognito mode,
+                    this.errorMessage = ex.message;
+                    Polymer.Base._error("Could not save to localStorage. Incognito mode may be blocking this action", ex);
+                }
+            }
+        }
+    )
+</script>
