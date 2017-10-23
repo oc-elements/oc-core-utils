@@ -3,6 +3,7 @@
 <link rel="import" href="../iron-location/iron-location.html">
 <link rel="import" href="../app-route/app-route.html">
 <link rel="import" href="ct-token-requestor-behaviour.html">
+<link rel="import" href="oc-core-utils.html">
 
 
 <dom-module id="oc-user-identity">
@@ -37,7 +38,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class OcUserIdentity extends Polymer.Element {
+    class OcUserIdentity extends Ordercloud.TokenRequestor(Polymer.Element) {
       static get is() { return 'oc-user-identity'; }
       static get properties() {
         return {
