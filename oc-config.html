@@ -1,0 +1,53 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+
+<dom-module id="oc-config">
+    <template>
+    </template>
+
+    <script>
+        class OcConfig extends Polymer.Element {
+            static get is() { return 'oc-config'; }
+
+            static get properties() {
+                return {
+                    /**
+                     * Your client id obtained from client registration
+                     */
+                    clientId: String,
+                    /**
+                     * The id of the organisation
+                     */
+                    organisationId: String,
+                    /**
+                     * Token redirect uri you've registered for this client
+                     */
+                    tokenRedirectUri: String,
+                    /**
+                     * Authentication host location
+                     */
+                    authHostUrl: String,
+                    /**
+                     * API host location
+                     */
+                    apiHostUrl: String
+                }
+            }
+            static get observers() {
+                return [
+                    '_setConfig(clientId, organisationId,  tokenRedirectUri, authHostUrl, apiHostUrl)'
+                ]}
+
+            _setConfig(clientId, organisationId , tokenRedirectUri, authHostUrl, apiHostUrl) {
+                OC.context = {
+                    clientId: this.clientId,
+                    organisationId : this.organisationId,
+                    tokenRedirectUri: this.tokenRedirectUri,
+                    authHostUrl: this.authHostUrl,
+                    apiHostUrl: this.apiHostUrl
+                };
+                this.dispatchEvent(new CustomEvent('config-complete', {
+                    bubbles: true, composed: true}));
+            }
+        }
+    </script>
+</dom-module>
