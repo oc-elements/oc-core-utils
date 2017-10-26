@@ -70,6 +70,7 @@
 
             /**
              * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
+             * @event expired-token event if token has expired
              * @param uri un generated uri on containing the path after /resource in api-docs
              * @returns {string} uri that has the host and /resource prepended
              * @private
@@ -80,7 +81,7 @@
 
             _normalizeError (request) {
                 if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
-                    throw new ExpiredTokenError();
+                    this.dispatchEvent(new CustomEvent('expired-token', {bubbles: true, composed: true}));
                 }
                 if (request.xhr.response && 'message' in request.xhr.response) {
                     throw new Error(request.xhr.response.message);
