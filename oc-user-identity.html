@@ -175,8 +175,9 @@
               this.$.tokenStorage.value = null;
               this.$.tokenStorage.save();
               this._setToken(null);
-              window.location = [CT.context.authHostUrl, '/sign-out', '?next=',
-                  encodeURIComponent(this.signedOutPage ? window.location.origin + this.signedOutPage : window.location.href)].join('');
+
+              //redirect to login
+              this._requestImplicitGrant();
           }
 
       }
