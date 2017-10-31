@@ -95,6 +95,8 @@
                 request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.identity.clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
+                //allows the errors to bubble up and be caught by window.oneError
+                request.bubbles = true;
                 return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
             }
         }
