@@ -82,6 +82,9 @@
             _normalizeError (request) {
                 if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
                     this.dispatchEvent(new CustomEvent('expired-token', {bubbles: true, composed: true}));
+
+                    console.error('Expired token, redirecting...');
+                    return;
                 }
                 if (request.xhr.response && 'message' in request.xhr.response) {
                     throw new Error(request.xhr.response.message);
