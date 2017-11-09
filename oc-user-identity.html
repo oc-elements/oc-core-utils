@@ -127,6 +127,11 @@
               }
           }
 
+          _refreshToken() {
+              console.log('Sign-in: Requesting new token');
+              this._requestImplicitGrant();
+          }
+
           _routeChanged(routeData) {
               if (routeData.prefix !== this._redirectPattern) {
                   return;
