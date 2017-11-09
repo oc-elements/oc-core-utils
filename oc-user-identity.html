@@ -127,7 +127,10 @@
               }
           }
 
-          _refreshToken() {
+          /**
+           * Gets a new token from auth server
+           */
+          refreshToken() {
               console.log('Sign-in: Requesting new token');
               this._requestImplicitGrant();
           }
