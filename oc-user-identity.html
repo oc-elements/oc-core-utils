@@ -146,7 +146,7 @@
                   if (this._postAuthPage === null) {
                       this._postAuthPage = "home"
                   }
-                   window.location = this._postAuthPage;
+                  window.location = this._postAuthPage;
               }
           }
 
@@ -177,7 +177,7 @@
               this._setToken(null);
 
               //redirect to login
-              this._requestImplicitGrant();
+              this._requestSignOut();
           }
 
       }
