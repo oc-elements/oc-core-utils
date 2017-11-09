@@ -37,10 +37,10 @@
                         '&redirect_uri=', encodeURIComponent(OC.context.tokenRedirectUri)
                     ].join('');
                 } else {
-                    console.error('123Core components not configured. Please initialise oc-config element before attempting authorisation.');
-
+                    console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');
                 }
             }
+
 
             /**
              *Requests link to signout of the app
@@ -49,11 +49,14 @@
                 if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri && OC.context.authClientId) {
                     this._save('post-auth-page', window.location.href);
                     window.location = [
-                        OC.context.authHostUrl, 'sign-out?next=oauth/implicit?response_type=token&client_id=', OC.context.authClientId +
-                        &redirect_uri=', encodeURIComponent(OC.context.tokenRedirectUri)'
+                        OC.context.authHostUrl, 'sign-out?next=',
+                        encodeURIComponent(
+                            'oauth/implicit?response_type=token&client_id=' +
+                            OC.context.authClientId +
+                            '&redirect_uri=' +
+                            OC.context.tokenRedirectUri
+                        )
                     ].join('');
-                    'oauth/implicit?response_type=token&client_id=', OC.context.authClientId,
-                        '&redirect_uri=', encodeURIComponent(OC.context.tokenRedirectUri)
                 } else {
                     console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');
 
