@@ -118,7 +118,7 @@
                   if (this._storedToken) {
                       console.log('Sign-in: Using stored token');
                       this._setToken(this._storedToken);
-                      this.$.usersAPI.getLoggedInUser()
+                      this.$.usersApi.getLoggedInUser()
                           .then(function (request) {
                               this.user = request.response;
                               OC.userId = this.user.id;
