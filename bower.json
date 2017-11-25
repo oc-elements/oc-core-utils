@@ -3,7 +3,9 @@
   "description": "Base element for communicating with the OC API",
   "main": "oc-core-utils.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0"
+    "polymer": "Polymer/polymer#^2.0.0",
+    "moment": "moment/moment#^2.13.0",
+    "bignumber.js": "MikeMcl/bignumber.js#^2.3.0"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",

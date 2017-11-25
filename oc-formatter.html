@@ -1,0 +1,58 @@
+<script src="../bignumber.js/bignumber.min.js"></script>
+<script src="../moment/min/moment.min.js"></script>
+
+<script>
+    /*
+ * Ordercloud API Mixin that allows communicating with API.
+ * @polymer
+ * @mixinFunction
+ */
+    Ordercloud = window.Ordercloud || { };
+    Ordercloud.Formatter = Polymer.dedupingMixin((superclass) =>
+
+        /*
+             * @polymer
+             * @mixinClass
+             */
+        class OCApi extends superclass {
+            constructor() {
+                super();
+            }
+
+            ready() {
+                super.ready();
+            }
+
+            formatNumber(number) {
+                  if (isNaN(number)) {
+                    return new BigNumber(0);
+                  }
+
+                  return new BigNumber(number || 0);
+                }
+
+            formatMoneyamount() {
+              return this.formatNumber(amount).toFixed(2);
+            }
+
+            formatDate(date, parseFormat, format) {
+              var parsedDate = this.formatMoment(date, parseFormat);
+              return parsedDate.format(format || 'DD MMM @ HH:ss');
+            }
+
+
+
+            formatMoment(date, format) {
+              if (date instanceof Date) {
+                return moment(date);
+              }
+              return moment(date, format || 'YYYY-MM-DD HH:mm:ss.SSS');
+            }
+
+            newMoment(){
+              return moment();
+            }
+        }
+    }
+
+</script>
