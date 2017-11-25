@@ -116,10 +116,24 @@
                   if (this._storedToken) {
                       console.log('Sign-in: Using stored token');
                       this._setToken(this._storedToken);
-                      OC.userId =
-                          this.dispatchEvent(new CustomEvent('oc-user-identity-ready', {
-                              bubbles: true, composed: true
-                          }));
+                      this.$.usersAPI.getLoggedInUser()
+                          .then(function (request) {
+                              this.user = request.response;
+                              OC.userId = this.user.id;
+                              this.dispatchEvent(new CustomEvent('oc-user-identity-ready', {
+                                  bubbles: true, composed: true, detail: this.user
+                              }));
+                          }.bind(this))
+                          .catch(ExpiredTokenError, function () {
+                              this._setToken(null);
+                              this.signIn();
+                          }.bind(this))
+                          .catch(function (error) {
+                              this.dispatchEvent(new CustomEvent('oc-sign-error', {
+                                  bubbles: true, composed: true, detail: error
+                              }));
+                          }.bind(this));
+
                   } else {
                       console.log('Sign-in: Requesting new token');
                       this._requestImplicitGrant();
