@@ -34,20 +34,25 @@
                     /**
                      * API host location
                      */
-                    apiHostUrl: String
+                    apiHostUrl: String,
+
+                    /**
+                     * Environment development, qa, sandbox, production
+                     */
+                    environment: String
                 }
             }
 
             static get observers()  {
                 return [
-                    '_setConfig(clientId, organisationId,  tokenRedirectUri,authClientId, authHostUrl, apiHostUrl)'
+                    '_setConfig(clientId, organisationId,  tokenRedirectUri,authClientId, authHostUrl, apiHostUrl, environment)'
                 ]}
 
             ready() {
                 super.ready();
             }
 
-            _setConfig(clientId, organisationId , tokenRedirectUri, authClientId, authHostUrl, apiHostUrl) {
+            _setConfig(clientId, organisationId , tokenRedirectUri, authClientId, authHostUrl, apiHostUrl, environment) {
                 OC.context = {
                     clientId: clientId,
                     organisationId : organisationId,
@@ -56,6 +61,8 @@
                     authHostUrl: authHostUrl,
                     apiHostUrl: apiHostUrl
                 };
+
+                OC.enviroment = environment;
 
                 /**
                  * Only fire event when all properties are loaded
