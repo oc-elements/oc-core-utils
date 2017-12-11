@@ -6,7 +6,8 @@
     "polymer": "Polymer/polymer#^2.0.0",
     "moment": "moment/moment#^2.13.0",
     "bignumber.js": "MikeMcl/bignumber.js#^2.3.0",
-    "oc-user-api": "git://github.com/oc-elements/oc-user-api#2.x"
+    "oc-user-api": "git://github.com/oc-elements/oc-user-api#2.x",
+    "iron-ajax": "PolymerElements/iron-ajax#^2.0.6"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
