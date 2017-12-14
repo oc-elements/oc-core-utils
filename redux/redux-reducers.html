@@ -1,0 +1,50 @@
+<script src="../node_modules/redux/dist/redux.min.js"></script>
+
+<script>
+    import {
+        ADD_TO_CART,
+        CLEAR_CART, INVALIDATE_CART,
+        INVALIDATE_ORGANISATION,
+        INVALIDATE_USER, LOGOUT_USER, RECEIVE_CART, RECEIVE_ORGANISATION,
+        RECEIVE_USER, REMOVE_FROM_CART, REQUEST_CART,
+        REQUEST_ORGANISATION,
+        REQUEST_USER
+    } from "./redux-action-types";
+
+    (function() {
+
+
+        function user(
+            state = {
+                user: [],
+                loggedIn: false
+            },
+            action
+        ) {
+            switch (action.type) {
+                case LOGOUT_USER:
+                    return Object.assign({}, state, {
+                        loggedIn: false,
+                        user: []
+                    });
+                case LOGIN_USER:
+                    return Object.assign({}, state, {
+                        loggedIn: true,
+                    });
+                case RECEIVE_USER:
+                    return Object.assign({}, state, {
+                        user: action.user,
+                        lastUpdated: action.receivedAt
+                    });
+                default:
+                    return state
+            }
+        }
+
+
+        OC.rootReducer = Redux.combineReducers({
+            user
+        })
+
+    }());
+</script>

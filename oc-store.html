@@ -1,0 +1,37 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/polymer-redux/polymer-redux.html">
+
+<link rel="import" href="redux/redux-actions.html">
+<link rel="import" href="redux/redux-middleware.html">
+<link rel="import" href="redux/redux-reducers.html">
+<link rel="import" href="redux/redux-selectors.html">
+
+<script>
+    (function() {
+
+        const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+            ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
+            : Redux.compose;
+
+        const enhancer = composeEnhancers(
+            Redux.applyMiddleware(...OC.middleware),
+        );
+
+        const store = Redux.createStore(OC.rootReducer, enhancer);
+
+        const reduxMixin = PolymerRedux(store);
+
+        /* @mixinFunction */
+        const actionsMixin = (superClass) => {
+            return class extends reduxMixin(superClass) {
+                static get actions() {
+                    return OC.actions
+                }
+            }
+        };
+
+        /* @mixinFunction */
+        OC.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+
+    }());
+</script>
