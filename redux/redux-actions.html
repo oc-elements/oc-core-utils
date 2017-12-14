@@ -1,0 +1,60 @@
+
+<link rel="import" href="redux-action-types.js">
+
+<script>
+    (function() {
+
+        /**
+         * Gets the logged in user
+         * @returns {{type}}
+         */
+        function requestUser() {
+            return {
+                type: REQUEST_USER
+            }
+        }
+
+        /**
+         * Set the logged in user
+         * @param payload
+         * @returns {{type, user: *, receivedAt: number}}
+         */
+        function receiveUser (payload) {
+            return {
+                type: RECEIVE_USER,
+                user: payload,
+                receivedAt: Date.now()
+            }
+        }
+
+        /**
+         * Set the logged in user
+         * @returns {{type}}
+         */
+        function loginUser () {
+            return {
+                type: LOGIN_USER,
+            }
+        }
+
+        /**
+         * Set the logged in user
+         * @returns {{type}}
+         */
+        function logoutUser () {
+            return {
+                type: LOGOUT_USER
+            }
+        }
+
+
+
+        OC.actions = {
+        requestUser,
+        receiveUser,
+        loginUser,
+        logoutUser
+        }
+
+    }());
+</script>
