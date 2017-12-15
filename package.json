@@ -1,0 +1,29 @@
+{
+  "name": "oc-core-utils",
+  "version": "1.0.0",
+  "description": "Core utils",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bower-npm-resolver": "^0.8.1",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oc-elements/oc-core-utils.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oc-elements/oc-core-utils/issues"
+  },
+  "homepage": "https://github.com/oc-elements/oc-core-utils#readme"
+}
