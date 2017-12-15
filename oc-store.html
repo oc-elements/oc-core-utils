@@ -11,7 +11,7 @@
 
     (function() {
 
-        window.OC = window.OC || {};
+        OC = window.OC || {};
 
         const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
             ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
@@ -29,13 +29,13 @@
         const actionsMixin = (superClass) => {
             return class extends ReduxMixin(superClass) {
                 static get actions() {
-                    return window.OC.actions
+                    return OC.actions
                 }
             }
         };
 
         /* @mixinFunction */
-        window.OC.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+        OC.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
 
     }());
 </script>
