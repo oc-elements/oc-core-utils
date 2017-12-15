@@ -197,11 +197,10 @@
                 }
             }
 
-            signOut() {
-                this.$.tokenStorage.value = null;
-                this.$.tokenStorage.save();
-                this._setToken(null);
-                this.dispatch('logoutUser');
+          signOut() {
+              this.$.tokenStorage.value = null;
+              this.$.tokenStorage.save();
+              this._setToken(null);this.dispatch('logoutUser');
 
                 //redirect to login
                 this._requestSignOut();
