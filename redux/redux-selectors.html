@@ -1,4 +1,4 @@
-<script src="../node_modules/reselect/dist/reselect.js"></script>
+<script src="../../../node_modules/reselect/dist/reselect.js"></script>
 
 <script>
     (function() {
@@ -6,7 +6,7 @@
         const getUser = state => state.user;
         const getLoggedIn = state => state.loggedIn;
 
-        OC.select = {
+        window.OC.select = {
             getUser,
             getLoggedIn
         }

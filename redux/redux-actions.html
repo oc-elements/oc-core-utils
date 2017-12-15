@@ -2,7 +2,15 @@
 <link rel="import" href="redux-action-types.js">
 
 <script>
+
+    //users
+    const REQUEST_USER=  'REQUEST_USER';
+    const RECEIVE_USER = 'RECEIVE_USER';
+    const LOGIN_USER = 'LOGIN_USER';
+    const LOGOUT_USER = 'LOGOUT_USER';
+
     (function() {
+
 
         /**
          * Gets the logged in user
@@ -49,11 +57,11 @@
 
 
 
-        OC.actions = {
-        requestUser,
-        receiveUser,
-        loginUser,
-        logoutUser
+        window.OC.actions = {
+            requestUser,
+            receiveUser,
+            loginUser,
+            logoutUser
         }
 
     }());

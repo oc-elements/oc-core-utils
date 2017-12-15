@@ -1,16 +1,13 @@
-<script src="../node_modules/redux/dist/redux.min.js"></script>
+<script src="../../../node_modules/redux/dist/redux.min.js"></script>
+<script src="redux-action-types.js"></script>
 
 <script>
-    import {
-        ADD_TO_CART,
-        CLEAR_CART, INVALIDATE_CART,
-        INVALIDATE_ORGANISATION,
-        INVALIDATE_USER, LOGOUT_USER, RECEIVE_CART, RECEIVE_ORGANISATION,
-        RECEIVE_USER, REMOVE_FROM_CART, REQUEST_CART,
-        REQUEST_ORGANISATION,
-        REQUEST_USER
-    } from "./redux-action-types";
 
+    //users
+    const REQUEST_USER=  'REQUEST_USER';
+    const RECEIVE_USER = 'RECEIVE_USER';
+    const LOGIN_USER = 'LOGIN_USER';
+    const LOGOUT_USER = 'LOGOUT_USER';
     (function() {
 
 
@@ -42,7 +39,7 @@
         }
 
 
-        OC.rootReducer = Redux.combineReducers({
+        window.OC.rootReducer = Redux.combineReducers({
             user
         })
 

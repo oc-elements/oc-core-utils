@@ -5,6 +5,7 @@
 <link rel="import" href="oc-core-utils.html">
 <link rel="import" href="oc-token-requestor-behaviour.html">
 <link rel="import" href="oc-core.html">
+<link rel="import" href="oc-store.html">
 <link rel="import" href="../oc-user-api/oc-user-api.html">
 
 
@@ -41,7 +42,7 @@
        * @polymer
        * @demo demo/index.html
        */
-      class OcUserIdentity extends Ordercloud.TokenRequestor(Polymer.Element) {
+      class OcUserIdentity extends Ordercloud.TokenRequestor( OC.ReduxMixin(Polymer.Element)) {
           static get is() { return 'oc-user-identity'; }
           static get properties() {
               return {
@@ -117,11 +118,12 @@
               if(this._tokenLoadComplete && this._signInRequested ) {
                   if (this._storedToken) {
                       console.log('Sign-in: Using stored token');
+                      this.dispatch('loginUser');
                       this._setToken(this._storedToken);
                       this.$.usersApi.getLoggedInUser()
                           .then(function (request) {
                               this.user = request.response;
-                              OC.userId = this.user.id;
+                              this.dispatch('receiveUser', this.user);
                               this.dispatchEvent(new CustomEvent('oc-user-identity-ready', {
                                   bubbles: true, composed: true, detail: this.user
                               }));
@@ -199,6 +201,7 @@
               this.$.tokenStorage.value = null;
               this.$.tokenStorage.save();
               this._setToken(null);
+              this.dispatch('logoutUser');
 
               //redirect to login
               this._requestSignOut();
