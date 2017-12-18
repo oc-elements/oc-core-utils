@@ -79,7 +79,7 @@
                         profile: [],
                         clientId: ""
                     });
-                case RECEIVE_CLIENT_ID
+                case RECEIVE_CLIENT_ID:
                     return Object.assign({}, state, {
                         clientId: action.client_id,
                         lastUpdated: action.receivedAt
@@ -104,7 +104,7 @@
             switch (action.type) {
                 case RECEIVE_CONFIG:
                     return Object.assign({}, state, {
-                        loaded: true
+                        loaded: true,
                         clientId: action.clientId,
                         tokenRedirectUri : action.tokenRedirectUri,
                         authClientId : action.authClientId,
