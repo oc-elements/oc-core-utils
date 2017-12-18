@@ -51,6 +51,71 @@
                         token: "",
                         lastUpdated: action.receivedAt
                     });
+
+                case CLEAR_TOKEN:
+                    return Object.assign({}, state, {
+                        token: "",
+                        lastUpdated: action.receivedAt
+                    });
+                default:
+                    return state
+            }
+        }
+
+        function organisation(
+            state = {
+                profile: [],
+                clientId: "",
+                default: 0
+
+            },
+            action
+        ) {
+            switch (action.type) {
+                case RECEIVE_ORGANISATION:
+                    return Object.assign({}, state, {
+                        profile: organisation,
+                        lastUpdated: action.receivedAt
+                    });
+                case CLEAR_ORGANISATION:
+                    return Object.assign({}, state, {
+                        profile: [],
+                        clientId: ""
+                    });
+                case RECEIVE_CLIENT_ID
+                    return Object.assign({}, state, {
+                        clientId: action.client_id,
+                        lastUpdated: action.receivedAt
+                    });
+                default:
+                    return state
+            }
+        }
+
+        function config(
+            state = {
+                loaded:false,
+                clientId: "",
+                tokenRedirectUri : "",
+                authClientId : "",
+                authHostUrl : "",
+                apiHostUrl :"",
+                environment: ""
+            },
+            action
+        ) {
+            switch (action.type) {
+                case RECEIVE_CONFIG:
+                    return Object.assign({}, state, {
+                        loaded: true
+                        clientId: action.clientId,
+                        tokenRedirectUri : action.tokenRedirectUri,
+                        authClientId : action.authClientId,
+                        authHostUrl : action.authHostUrl,
+                        apiHostUrl :action.authHostUrl,
+                        environment: action.environment,
+                        lastUpdated: action.receivedAt
+                    });
                 default:
                     return state
             }

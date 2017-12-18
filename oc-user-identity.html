@@ -187,15 +187,15 @@
                 }
             }
 
-            _setToken(jwtToken) {
-                if (jwtToken) {
-                    var jwtClaimSetEncoded = jwtToken.split(".")[1];
-                    this.dispatch('loginUser',jwtToken)
+          _setToken(jwtToken) {
+              if (jwtToken) {
+                  var jwtClaimSetEncoded = jwtToken.split(".")[1];
+                  this.dispatch('loginUser', jwtToken)
 
-                } else {
-                    this.dispatch('clearToken');
-                }
-            }
+              } else {
+                  this.dispatch('clearToken');
+              }
+          }
 
           signOut() {
               this.$.tokenStorage.value = null;
