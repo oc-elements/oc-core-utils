@@ -50,7 +50,10 @@
                   /**
                    * Token redirect uri you've registered for this client
                    */
-                  tokenRedirectUri: String,
+                  _tokenRedirectUri: {
+                      type:String,
+                      statePath: 'config._tokenRedirectUri'
+                  },
                   /**
                    * Page to after sign out.
                    */
@@ -113,8 +116,10 @@
           }
 
           _setRoutePattern() {
-              console.log('Token reception end-point will be: ' + this.tokenRedirectUri);
-              this._redirectPattern = new URL(this.tokenRedirectUri).pathname;
+              if(this._tokenRedirectUri) {
+                  console.log('Token reception end-point will be: ' + this._tokenRedirectUri);
+                  this._redirectPattern = new URL(this._tokenRedirectUri).pathname;
+              }
           }
 
           signIn() {
@@ -188,21 +193,10 @@
           _setToken(jwtToken) {
               if (jwtToken) {
                   var jwtClaimSetEncoded = jwtToken.split(".")[1];
-                  var jwtClaimSet = JSON.parse(atob(jwtClaimSetEncoded));
-
-                  OC.identity = {
-                      clientId: jwtClaimSet.iss,
-                      token: jwtToken,
-                      userId: jwtClaimSet.prn
-                  };
-
+                  this.dispatch('loginUser',jwtToken)
 
               } else {
-                  OC.identity = {
-                      clientId: null,
-                      token: null,
-                      userId: null
-                  };
+                  this.dispatch('clearToken');
               }
           }
 
