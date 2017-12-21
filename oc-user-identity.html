@@ -42,7 +42,7 @@
        * @polymer
        * @demo demo/index.html
        */
-      class OcUserIdentity extends Ordercloud.TokenRequestor(OC.ReduxMixin(Polymer.Element)) {
+      class OcUserIdentity extends Ordercloud.TokenRequestor(Ordercloud.ReduxMixin(Polymer.Element)) {
           static get is() { return 'oc-user-identity'; }
           static get properties() {
               return {

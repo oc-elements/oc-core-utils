@@ -119,7 +119,8 @@
         }
 
 
-        OC.rootReducer = Redux.combineReducers({
+        var Ordercloud = window.Ordercloud || {};
+        Ordercloud.rootReducer = Redux.combineReducers({
             identity,
             organisation,
             config
