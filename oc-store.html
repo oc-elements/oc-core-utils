@@ -9,17 +9,17 @@
 <script>
     (function() {
 
-        let OC = window.OC || {};
+        let Ordercloud = window.Ordercloud || {};
 
         const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
             ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
             : Redux.compose;
 
         const enhancer = composeEnhancers(
-            Redux.applyMiddleware(...OC.middleware),
+            Redux.applyMiddleware(...Ordercloud.middleware),
         );
 
-        const store = Redux.createStore(OC.rootReducer, enhancer);
+        const store = Redux.createStore(Ordercloud.rootReducer, enhancer);
 
         const reduxMixin = PolymerRedux(store);
 
@@ -27,13 +27,13 @@
         const actionsMixin = (superClass) => {
             return class extends reduxMixin(superClass) {
                 static get actions() {
-                    return OC.actions
+                    return Ordercloud.actions
                 }
             }
         };
 
         /* @mixinFunction */
-        OC.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
+        Ordercloud.ReduxMixin = Polymer.dedupingMixin(actionsMixin);
 
     }());
 </script>
