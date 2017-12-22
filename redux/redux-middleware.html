@@ -4,7 +4,11 @@
 
     var Ordercloud = window.Ordercloud || {};
 
-    Ordercloud["middleware"] = [
-        ReduxThunk.default
-    ] || {};
+    (function() {
+
+
+        Ordercloud.middleware = [
+            ReduxThunk.default
+        ]
+    }());
 </script>

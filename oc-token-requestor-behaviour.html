@@ -53,7 +53,7 @@
                     this._save('post-auth-page', window.location.href);
                     window.location = [
                         this._authHostUrl, 'oauth/implicit?response_type=token&client_id=', this._authClientId,
-                        '&redirect_uri=', encodeURIComponent(this._.tokenRedirectUri)
+                        '&redirect_uri=', encodeURIComponent(this._tokenRedirectUri)
                     ].join('');
                 } else {
                     console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');

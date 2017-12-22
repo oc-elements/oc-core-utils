@@ -2,6 +2,7 @@
 <link rel="import" href="redux-action-types.js">
 
 <script>
+    var Ordercloud = window.Ordercloud || {};
     (function() {
 
         /**
@@ -100,29 +101,29 @@
          * @param payload
          * @returns {{type, clientId: *, receivedAt: number}}
          */
-        function receiveConfig (clientId , tokenRedirectUri, authClientId,authHostUrl,apiHostUrl,environment) {
+        function receiveConfig (payload) {
             return {
-                type: RECEIVE_CLIENT_ID,
-                clientId: clientId,
-                tokenRedirectUri: tokenRedirectUri,
-                authClientId: authClientId,
-                authHostUrl: authHostUrl,
-                apiHostUrl: apiHostUrl,
-                environment: environment,
+                type: RECEIVE_CONFIG,
+                clientId: payload.clientId,
+                organisationId: payload.organisationId,
+                tokenRedirectUri: payload.tokenRedirectUri,
+                authClientId: payload.authClientId,
+                authHostUrl: payload.authHostUrl,
+                apiHostUrl: payload.apiHostUrl,
+                environment: payload.environment,
                 receivedAt: Date.now()
             }
         }
 
 
-        var Ordercloud = window.Ordercloud || {};
         Ordercloud.actions = {
-
             receiveUser,
             loginUser,
             logoutUser,
             receiveOrganisation,
             clearOrganisation,
-            receiveClientId
+            receiveClientId,
+            receiveConfig
         }
 
     }());
