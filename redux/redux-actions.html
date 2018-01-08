@@ -63,12 +63,13 @@
         /**
          * Set the current organisation
          * @param payload
-         * @returns {{type, organisation: *, receivedAt: number}}
+         * @returns {{type, profile: *,id : number, receivedAt: number}}
          */
         function receiveOrganisation (payload) {
             return {
                 type: RECEIVE_ORGANISATION,
-                organisation: payload,
+                profile: payload.profile,
+                id: payload.id,
                 receivedAt: Date.now()
             }
         }

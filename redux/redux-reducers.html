@@ -71,17 +71,19 @@
             switch (action.type) {
                 case RECEIVE_ORGANISATION:
                     return Object.assign({}, state, {
-                        profile: organisation,
+                        id : action.id,
+                        profile: action.profile,
                         lastUpdated: action.receivedAt
                     });
                 case CLEAR_ORGANISATION:
                     return Object.assign({}, state, {
+                        id : 0,
                         profile: [],
                         clientId: ""
                     });
                 case RECEIVE_CLIENT_ID:
                     return Object.assign({}, state, {
-                        clientId: action.client_id,
+                        clientId: action.clientId,
                         lastUpdated: action.receivedAt
                     });
                 default:
