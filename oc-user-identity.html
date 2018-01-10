@@ -155,7 +155,8 @@
           refreshToken() {
               console.log('Sign-in: Requesting new token');
               //clear the current token
-              this.dispatch('clearToken');this._requestImplicitGrant();
+              this.dispatch('clearToken');
+              this._requestImplicitGrant();
           }
 
             _routeChanged(route, redirectPattern, tokenLoadComplete) {
@@ -186,20 +187,21 @@
                 }
             }
 
-          _setToken(jwtToken) {
-              if (jwtToken) {
-                  var jwtClaimSetEncoded = jwtToken.split(".")[1];
-                  this.dispatch('loginUser', jwtToken)
+            _setToken(jwtToken) {
+                if (jwtToken) {
+                    var jwtClaimSetEncoded = jwtToken.split(".")[1];
+                    this.dispatch('loginUser', jwtToken)
 
-              } else {
-                  this.dispatch('clearToken');
-              }
-          }
+                } else {
+                    this.dispatch('clearToken');
+                }
+            }
 
           signOut() {
               this.$.tokenStorage.value = null;
               this.$.tokenStorage.save();
-              this._setToken(null);this.dispatch('logoutUser');
+              this._setToken(null);
+              this.dispatch('logoutUser');
 
                 //redirect to login
                 this._requestSignOut();
