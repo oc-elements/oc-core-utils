@@ -10,210 +10,205 @@
 
 
 <dom-module id="oc-user-identity">
-  <template>
-    <app-location route="{{ route }}"></app-location>
-    <app-route route="[[ route ]]" pattern="[[ _redirectPattern ]]" tail="{{ routeData }}"></app-route>
+    <template>
+        <app-location route="{{ route }}"></app-location>
+        <app-route route="[[ route ]]" pattern="[[ _redirectPattern ]]" tail="{{ routeData }}"></app-route>
 
-    <oc-user-api id="usersApi"></oc-user-api>
-    <iron-localstorage
-            id="tokenStorage"
-            name="token"
-            use-raw
-            auto-save-disabled
-            on-iron-localstorage-load="_storedTokenLoaded"
-            on-iron-localstorage-load-empty="_storedTokenLoadedEmpty"
-    ></iron-localstorage>
-    <iron-localstorage
-            id="postAuthPageStorage"
-            name="post-auth-page"
-            use-raw
-            auto-save-disabled
-            on-iron-localstorage-load="_postAuthPageStorageLoaded"
-            on-iron-localstorage-load-empty="_postAuthPageStorageLoaded"
-    ></iron-localstorage>
-  </template>
+        <oc-user-api id="usersApi"></oc-user-api>
+        <iron-localstorage
+                id="tokenStorage"
+                name="token"
+                use-raw
+                auto-save-disabled
+                on-iron-localstorage-load="_storedTokenLoaded"
+                on-iron-localstorage-load-empty="_storedTokenLoadedEmpty"
+        ></iron-localstorage>
+        <iron-localstorage
+                id="postAuthPageStorage"
+                name="post-auth-page"
+                use-raw
+                auto-save-disabled
+                on-iron-localstorage-load="_postAuthPageStorageLoaded"
+                on-iron-localstorage-load-empty="_postAuthPageStorageLoaded"
+        ></iron-localstorage>
+    </template>
 
-  <script>
-      /**
-       * `oc-user-identity`
-       * Ordercloud User Identity
-       *
-       * @customElement
-       * @polymer
-       * @demo demo/index.html
-       */
-      class OcUserIdentity extends Ordercloud.TokenRequestor(Ordercloud.ReduxMixin(Polymer.Element)) {
-          static get is() { return 'oc-user-identity'; }
-          static get properties() {
-              return {
-                  /**
-                   * Token redirect uri you've registered for this client
-                   */
-                  _tokenRedirectUri: {
-                      type:String,
-                      statePath: 'config.tokenRedirectUri'
-                  },
-                  /**
-                   * Page to after sign out.
-                   */
-                  signedOutPage: String,
-                  /**
-                   * The page to navigate too after login
-                   */
-                  _signInRequested : {
-                      type: Boolean,
-                      value: false
-                  },
-                  _tokenLoadComplete: {
-                      type: Boolean,
-                      value: false
-                  },
-                  _tokenReady: {
-                      type: Boolean,
-                      value: false
-                  },
-                  _postAuthPage: {
-                      type: String,
-                      value: "/"
-                  }
+    <script>
+        /**
+         * `oc-user-identity`
+         * Ordercloud User Identity
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class OcUserIdentity extends Ordercloud.TokenRequestor(Ordercloud.ReduxMixin(Polymer.Element)) {
+            static get is() { return 'oc-user-identity'; }
+            static get properties() {
+                return {
+                    /**
+                     * Token redirect uri you've registered for this client
+                     */
+                    _tokenRedirectUri: {
+                        type:String,
+                        statePath: 'config.tokenRedirectUri'
+                    },
+                    /**
+                     * Page to after sign out.
+                     */
+                    signedOutPage: String,
+                    /**
+                     * The page to navigate too after login
+                     */
+                    _signInRequested : {
+                        type: Boolean,
+                        value: false
+                    },
+                    _tokenLoadComplete: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _tokenReady: {
+                        type: Boolean,
+                        value: false
+                    },
+                    _postAuthPage: {
+                        type: String,
+                        value: "/"
+                    }
 
-              };
-          }
-          static get observers() {
-              return[
-                  '_setRoutePattern(tokenRedirectUri)',
-                  '_signIn(_signInRequested, _tokenLoadComplete)',
-                  '_routeChanged(routeData)',
-                  '_pageToAfterSignIn(_postAuthPage, _tokenReady)'
-              ]
-          }
+                };
+            }
+            static get observers() {
+                return[
+                    '_routeChanged(route, _tokenRedirectUri, _tokenLoadComplete)',
+                    '_signIn(_signInRequested, _tokenLoadComplete)',
+                    '_pageToAfterSignIn(_postAuthPage, _tokenReady)'
+                ]
+            }
 
-          connectedCallback() {
-              super.connectedCallback();
-              //get the redux state
-              const state = this.getState();
-          }
+            connectedCallback() {
+                super.connectedCallback();
+            }
 
-          ready() {
-              super.ready();
-          }
+            ready() {
+                super.ready();
+            }
 
-          _storedTokenLoaded() {
-              this._storedToken = this.$.tokenStorage.value;
-              this._tokenLoadComplete = true;
-              console.log('Stored token loaded');
-          }
+            _storedTokenLoaded() {
+                this._storedToken = this.$.tokenStorage.value;
+                this._tokenLoadComplete = true;
+                console.log('Stored token loaded');
+            }
 
-          _storedTokenLoadedEmpty() {
-              this._tokenLoadComplete = true;
-              console.log('No stored token');
-          }
+            _storedTokenLoadedEmpty() {
+                this._tokenLoadComplete = true;
+                console.log('No stored token');
+            }
 
-          _postAuthPageStorageLoaded() {
-              this._postAuthPage = this.$.postAuthPageStorage.value;
+            _postAuthPageStorageLoaded() {
+                this._postAuthPage = this.$.postAuthPageStorage.value;
 //          console.log('Post-auth page loaded: ' + this._postAuthPage);
-          }
+            }
 
-          _setRoutePattern() {
-              if(this._tokenRedirectUri) {
-                  console.log('Token reception end-point will be: ' + this._tokenRedirectUri);
-                  this._redirectPattern = new URL(this._tokenRedirectUri).pathname;
-              }
-          }
+            signIn() {
+                this._signInRequested = true;
+            }
 
-          signIn() {
-              this._signInRequested = true;
-          }
+            _signIn() {
+                if(this._tokenLoadComplete && this._signInRequested ) {
+                    if (this._storedToken) {
+                        console.log('Sign-in: Using stored token');
+                        this._setToken(this._storedToken);
+                        this.dispatch('loginUser', this._storedToken);
+                        this.$.usersApi.getLoggedInUser()
+                            .then(function (request) {
+                                this.user =  request.response;
+                                //update state
+                                this.dispatch('receiveUser', this.user);
 
-          _signIn() {
-              if(this._tokenLoadComplete && this._signInRequested ) {
-                  if (this._storedToken) {
-                      console.log('Sign-in: Using stored token');
-                      this._setToken(this._storedToken);
-                      this.dispatch('loginUser', this._storedToken);
-                      this.$.usersApi.getLoggedInUser()
-                          .then(function (request) {
-                              this.user =  request.response;
-                              //update state
-                              this.dispatch('receiveUser', this.user);
+                                this.dispatchEvent(new CustomEvent('oc-user-identity-ready', {
+                                    bubbles: true, composed: true, detail: this.user
+                                }));
+                            }.bind(this))
+                            .catch(ExpiredTokenError, function () {
+                                this._setToken(null);
+                                this.dispatch('clearToken');
+                                this.signIn();
+                            }.bind(this))
+                            .catch(function (error) {
+                                this.dispatchEvent(new CustomEvent('oc-sign-error', {
+                                    bubbles: true, composed: true, detail: error
+                                }));
+                            }.bind(this));
 
-                              this.dispatchEvent(new CustomEvent('oc-user-identity-ready', {
-                                  bubbles: true, composed: true, detail: this.user
-                              }));
-                          }.bind(this))
-                          .catch(ExpiredTokenError, function () {
-                              this._setToken(null);
-                              this.dispatch('clearToken');
-                              this.signIn();
-                          }.bind(this))
-                          .catch(function (error) {
-                              this.dispatchEvent(new CustomEvent('oc-sign-error', {
-                                  bubbles: true, composed: true, detail: error
-                              }));
-                          }.bind(this));
+                    } else {
+                        console.log('Sign-in: Requesting new token');
+                        this._requestImplicitGrant();
+                    }
+                }
+            }
 
-                  } else {
-                      console.log('Sign-in: Requesting new token');
-                      this._requestImplicitGrant();
-                  }
-              }
-          }
+            /**
+             * Gets a new token from auth server
+             */
+            refreshToken() {
+                console.log('Sign-in: Requesting new token');
+                //clear the current token
+                this.dispatch('clearToken');
+                this._requestImplicitGrant();
+            }
 
-          /**
-           * Gets a new token from auth server
-           */
-          refreshToken() {
-              console.log('Sign-in: Requesting new token');
-              //clear the current token
-              this.dispatch('clearToken');
-              this._requestImplicitGrant();
-          }
+            _routeChanged(route, redirectPattern, tokenLoadComplete) {
 
-          _routeChanged(routeData) {
-              if (routeData.prefix !== this._redirectPattern) {
-                  return;
-              }
-              if (routeData.__queryParams.access_token) {
-                  console.log('Token received on ' + this._redirectPattern);
-                  this.$.tokenStorage.value = routeData.__queryParams.access_token;
-                  this.$.tokenStorage.save();
-                  this._tokenReady = true;
-              }
-          }
+                if ((!redirectPattern)
+                    || (route.path.split("/").pop() !== redirectPattern.split("/").pop())
+                    || (!tokenLoadComplete)) {
+                    return;
+                }
+                if (route.__queryParams.access_token) {
+                    console.log('Token received on ' + redirectPattern);
 
-          _pageToAfterSignIn() {
-              if(this._tokenReady) {
-                  console.log('Pushing window state');
-                  //window.history.pushState(null, '', this._postAuthPage);
-                  if (this._postAuthPage === null) {
-                      this._postAuthPage = "home"
-                  }
-                  window.location = this._postAuthPage;
-              }
-          }
+                    this.$.tokenStorage.value = route.__queryParams.access_token;
+                    this.$.tokenStorage.save();
+                    this._setToken(route.__queryParams.access_token);
+                    this._tokenReady = true;
+                }
+            }
 
-          _setToken(jwtToken) {
-              if (jwtToken) {
-                  var jwtClaimSetEncoded = jwtToken.split(".")[1];
-                  this.dispatch('loginUser',jwtToken)
+            _pageToAfterSignIn() {
+                if(this._tokenReady) {
+                    console.log('Pushing window state');
+                    //window.history.pushState(null, '', this._postAuthPage);
+                    if (this._postAuthPage === null) {
+                        this._postAuthPage = "home"
+                    }
+                    window.location = this._postAuthPage;
+                }
+            }
 
-              } else {
-                  this.dispatch('clearToken');
-              }
-          }
+            _setToken(jwtToken) {
+                if (jwtToken) {
+                    var jwtClaimSetEncoded = jwtToken.split(".")[1];
+                    this.dispatch('loginUser',jwtToken)
 
-          signOut() {
-              this.$.tokenStorage.value = null;
-              this.$.tokenStorage.save();
-              this._setToken(null);
-              this.dispatch('logoutUser');
+                } else {
+                    this.dispatch('clearToken');
+                }
+            }
 
-              //redirect to login
-              this._requestSignOut();
-          }
+            signOut() {
+                this.$.tokenStorage.value = null;
+                this.$.tokenStorage.save();
+                this._setToken(null);
+                this.dispatch('logoutUser');
 
-      }
+                //redirect to login
+                this._requestSignOut();
+            }
 
-      window.customElements.define(OcUserIdentity.is, OcUserIdentity);
-  </script>
+        }
+
+        window.customElements.define(OcUserIdentity.is, OcUserIdentity);
+    </script>
 </dom-module>
