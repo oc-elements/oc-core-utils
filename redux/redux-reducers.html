@@ -39,13 +39,13 @@
                     });
                 case LOGIN_USER:
                     return Object.assign({}, state, {
-                        loggedIn: true,
                         token : action.token,
                         lastUpdated: action.receivedAt
                     });
                 case RECEIVE_USER:
                     return Object.assign({}, state, {
                         user: action.user,
+                        loggedIn: true,
                         lastUpdated: action.receivedAt
                     });
 
