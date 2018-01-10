@@ -95,11 +95,11 @@
                 super.ready();
             }
 
-          _storedTokenLoaded() {
-              this._storedToken = this.$.tokenStorage.value;
-              this.dispatch('loginUser', this._storedToken);this._tokenLoadComplete = true;
-              console.log('Stored token loaded');
-          }
+            _storedTokenLoaded() {
+                this._storedToken = this.$.tokenStorage.value;
+                this.dispatch('loginUser', this._storedToken);this._tokenLoadComplete = true;
+                console.log('Stored token loaded');
+            }
 
             _storedTokenLoadedEmpty() {
                 this._tokenLoadComplete = true;
