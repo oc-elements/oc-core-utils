@@ -61,21 +61,15 @@
                             {"key": 505, "text": "HTTP Version Not Supported"},
                             {"key": 506, "text": "Variant Also Negotiates"}
                         ]
-                    },
-                    _url:{
-                        type : String,
-                        statePath: 'config.apiHostUrl'
-                    },
-                    _token:{
-                        type : String,
-                        statePath: 'identity.token'
-                    },
-                    //TODO: change this to work with the selected organisation
-                    _clientId:{
-                        type : String,
-                        statePath: 'config.clientId'
                     }
                 };
+            }
+
+            // Element class can define custom element reactions
+            connectedCallback() {
+                super.connectedCallback();
+                //Using this because of the statePath that does not seem to update fast enough
+                const state = this.getState();
             }
 
             ready() {
@@ -88,7 +82,7 @@
              * @returns {string} uri that has the host and /resource prepended
              */
             _generateUrl(uri) {
-                return this._url + 'resource/' + uri;
+                return this.getState().config.apiHostUrl + 'resource/' + uri;
             }
 
             _normalizeError (request) {
@@ -103,8 +97,8 @@
             }
 
             _generateRequest (request) {
-                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this._token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || this._clientId;
+                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().config.clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError
