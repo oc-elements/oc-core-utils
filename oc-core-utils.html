@@ -84,10 +84,8 @@
 
             /**
              * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
-             * @event expired-token event if token has expired
              * @param uri un generated uri on containing the path after /resource in api-docs
              * @returns {string} uri that has the host and /resource prepended
-             * @private
              */
             _generateUrl(uri) {
                 return this._url + 'resource/' + uri;
