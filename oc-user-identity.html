@@ -164,6 +164,8 @@
            */
           refreshToken() {
               console.log('Sign-in: Requesting new token');
+              //clear the current token
+              this.dispatch('clearToken');
               this._requestImplicitGrant();
           }
 
