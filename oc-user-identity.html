@@ -133,7 +133,7 @@
                             }.bind(this))
                             .catch(ExpiredTokenError, function () {
                                 this._setToken(null);
-                                this.dispatch('clearToken');
+                                this.dispatch('clearToken', null);
                                 this.signIn();
                             }.bind(this))
                             .catch(function (error) {
