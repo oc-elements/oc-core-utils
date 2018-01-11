@@ -1,3 +1,4 @@
+<script src="../../node_modules/redux-thunk/dist/redux-thunk.min.js"></script>
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/polymer-redux/polymer-redux.html">
 
@@ -7,8 +8,8 @@
 <link rel="import" href="redux/redux-selectors.html">
 
 <script>
-    (function() {
 
+    (function() {
         let Ordercloud = window.Ordercloud || {};
 
         const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -21,11 +22,11 @@
 
         const store = Redux.createStore(Ordercloud.rootReducer, enhancer);
 
-        const reduxMixin = PolymerRedux(store);
+        const ReduxMixin = PolymerRedux(store);
 
         /* @mixinFunction */
         const actionsMixin = (superClass) => {
-            return class extends reduxMixin(superClass) {
+            return class extends ReduxMixin(superClass) {
                 static get actions() {
                     return Ordercloud.actions
                 }
