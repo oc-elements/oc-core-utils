@@ -52,7 +52,7 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    log.error("Identity Action Type not found: " + action.type);
+                    console.error("Identity Action Type not found: " + action.type);
                     return state
             }
         }
@@ -85,7 +85,7 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    log.error("Organisation Action Type not found: " + action.type);
+                    console.error("Organisation Action Type not found: " + action.type);
                     return state
             }
         }
@@ -116,7 +116,7 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    log.error("Config Action Type not found: " + action.type);
+                    console.error("Config Action Type not found: " + action.type);
                     return state
             }
         }
