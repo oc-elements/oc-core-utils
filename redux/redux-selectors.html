@@ -3,8 +3,22 @@
 <script>
     (function() {
 
-        const getUser = state => state.user;
-        const getLoggedIn = state => state.loggedIn;
+
+        const getMarketplaceClientId = state => state.organisation.clientId;
+        const getOrganisationClientId = state => state.config.clientId;
+
+        const clientId = Reselect.createSelector(
+            [getMarketplaceClientId, getOrganisationClientId],
+            (marketplace) => {
+
+                if((getOrganisationClientId == "")||(marketplace)){
+                        return getMarketplaceClientId;
+                }else{
+                    return getOrganisationClientId;
+                }
+            }
+        );
+
 
         var Ordercloud = window.Ordercloud || {};
         Ordercloud.select = {
