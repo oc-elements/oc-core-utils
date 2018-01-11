@@ -1,4 +1,5 @@
 <link rel="import" href="../iron-ajax/iron-request.html">
+<link rel="import" href="oc-store.html">
 <iron-request id="xhr"></iron-request>
 <script>
     /*
@@ -13,13 +14,31 @@
              * @polymer
              * @mixinClass
              */
-        class TokenRequestor extends superclass {
+        class TokenRequestor extends Ordercloud.ReduxMixin( superclass) {
             constructor() {
                 super();
             }
 
             static get properties() {
-                return {};
+                return {
+                    _clientId : {
+                        type: String,
+                        statePath: 'config.clientId'
+                    },
+                    _authHostUrl: {
+                        type: String,
+                        statePath: 'config.authHostUrl'
+                    },
+                    _tokenRedirectUri:{
+                        type: String,
+                        statePath: 'config.tokenRedirectUri'
+                    },
+                    _authClientId:{
+                        type: String,
+                        statePath: 'config.authClientId'
+                    }
+
+                };
             }
 
             ready() {
@@ -30,11 +49,11 @@
              *Requests a token from the auth serverwith implicit grant type
              */
             _requestImplicitGrant() {
-                if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri && OC.context.authClientId) {
+                if (this._clientId && this._authHostUrl && this._tokenRedirectUri && this._authClientId) {
                     this._save('post-auth-page', window.location.href);
                     window.location = [
-                        OC.context.authHostUrl, 'oauth/implicit?response_type=token&client_id=', OC.context.authClientId,
-                        '&redirect_uri=', encodeURIComponent(OC.context.tokenRedirectUri)
+                        this._authHostUrl, 'oauth/implicit?response_type=token&client_id=', this._authClientId,
+                        '&redirect_uri=', encodeURIComponent(this._tokenRedirectUri)
                     ].join('');
                 } else {
                     console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');
@@ -46,15 +65,15 @@
              *Requests link to signout of the app
              */
             _requestSignOut() {
-                if (OC.context.clientId && OC.context.authHostUrl && OC.context.tokenRedirectUri && OC.context.authClientId) {
+                if (this._clientId && this._authHostUrl && this._tokenRedirectUri && this._authClientId) {
                     this._save('post-auth-page', window.location.href);
                     window.location = [
-                        OC.context.authHostUrl, 'sign-out?next=',
+                        this._authHostUrl, 'sign-out?next=',
                         encodeURIComponent(
                             'oauth/implicit?response_type=token&client_id=' +
-                            OC.context.authClientId +
+                            this._authClientId +
                             '&redirect_uri=' +
-                            OC.context.tokenRedirectUri
+                            this._tokenRedirectUri
                         )
                     ].join('');
                 } else {

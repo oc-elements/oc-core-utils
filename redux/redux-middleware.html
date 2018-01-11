@@ -1,11 +1,12 @@
 <script src="../../../node_modules/redux-thunk/dist/redux-thunk.min.js"></script>
 
 <script>
-    (function() {
 
-        window.OC.middleware = [
+    var Ordercloud = window.Ordercloud || {};
+
+    (function() {
+        Ordercloud.middleware = [
             ReduxThunk.default
         ]
-
     }());
 </script>

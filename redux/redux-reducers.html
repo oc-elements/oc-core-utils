@@ -1,7 +1,23 @@
 <script src="../../../node_modules/redux/dist/redux.min.js"></script>
-<script src="redux-action-types.js"></script>
 
 <script>
+
+    //users
+    const REQUEST_USER=  'REQUEST_USER';
+    const RECEIVE_USER = 'RECEIVE_USER';
+    const LOGIN_USER = 'LOGIN_USER';
+    const LOGOUT_USER = 'LOGOUT_USER';
+    const CLEAR_TOKEN = 'CLEAR_TOKEN';
+
+    //organisation
+    const RECEIVE_ORGANISATION =  'RECEIVE_ORGANISATION';
+    const RECEIVE_CLIENT_ID = 'RECEIVE_CLIENT_ID';
+    const CLEAR_ORGANISATION = 'CLEAR_ORGANISATION';
+
+    //config
+    const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
+
+
 
     //users
     const REQUEST_USER=  'REQUEST_USER';
@@ -11,10 +27,11 @@
     (function() {
 
 
-        function user(
+        function identity(
             state = {
                 user: [],
-                loggedIn: false
+                loggedIn: false,
+                token: ""
             },
             action
         ) {
@@ -22,25 +39,101 @@
                 case LOGOUT_USER:
                     return Object.assign({}, state, {
                         loggedIn: false,
-                        user: []
+                        user: [],
+                        token: ""
                     });
                 case LOGIN_USER:
                     return Object.assign({}, state, {
-                        loggedIn: true,
+                        token : action.token,
+                        lastUpdated: action.receivedAt
                     });
                 case RECEIVE_USER:
                     return Object.assign({}, state, {
                         user: action.user,
+                        loggedIn: true,
+                        lastUpdated: action.receivedAt
+                    });
+
+                case CLEAR_TOKEN:
+                    return Object.assign({}, state, {
+                        token: "",
                         lastUpdated: action.receivedAt
                     });
                 default:
+                    log.error("Identity Action Type not found: " + action.type);
                     return state
             }
         }
 
+        function organisation(
+            state = {
+                id: 0,
+                profile: [],
+                clientId: "",
+                default: 0
+            },
+            action
+        ) {
+            switch (action.type) {
+                case RECEIVE_ORGANISATION:
+                    return Object.assign({}, state, {
+                        id : action.id,
+                        profile: action.profile,
+                        lastUpdated: action.receivedAt
+                    });
+                case CLEAR_ORGANISATION:
+                    return Object.assign({}, state, {
+                        id : 0,
+                        profile: [],
+                        clientId: ""
+                    });
+                case RECEIVE_CLIENT_ID:
+                    return Object.assign({}, state, {
+                        clientId: action.clientId,
+                        lastUpdated: action.receivedAt
+                    });
+                default:
+                    log.error("Organisation Action Type not found: " + action.type);
+                    return state
+            }
+        }
 
-        window.OC.rootReducer = Redux.combineReducers({
-            user
+        function config(
+            state = {
+                loaded:false,
+                clientId: "",
+                tokenRedirectUri : "",
+                authClientId : "",
+                authHostUrl : "",
+                apiHostUrl :"",
+                environment: ""
+            },
+            action
+        ) {
+            switch (action.type) {
+                case RECEIVE_CONFIG:
+                    return Object.assign({}, state, {
+                        loaded: true,
+                        clientId: action.clientId,
+                        organisationId: action.organisationId,
+                        tokenRedirectUri : action.tokenRedirectUri,
+                        authClientId : action.authClientId,
+                        authHostUrl : action.authHostUrl,
+                        apiHostUrl :action.apiHostUrl,
+                        environment: action.environment,
+                        lastUpdated: action.receivedAt
+                    });
+                default:
+                    log.error("Config Action Type not found: " + action.type);
+                    return state
+            }
+        }
+
+        var Ordercloud = window.Ordercloud || {};
+        Ordercloud.rootReducer = Redux.combineReducers({
+            identity,
+            organisation,
+            config
         })
 
     }());

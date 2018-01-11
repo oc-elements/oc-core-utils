@@ -6,7 +6,8 @@
         const getUser = state => state.user;
         const getLoggedIn = state => state.loggedIn;
 
-        window.OC.select = {
+        var Ordercloud = window.Ordercloud || {};
+        Ordercloud.select = {
             getUser,
             getLoggedIn
         }

@@ -2,8 +2,7 @@
 <link rel="import" href="redux-action-types.js">
 
 <script>
-
-    //users
+    var Ordercloud = window.Ordercloud || {};
     (function() {
 
 
@@ -34,9 +33,10 @@
          * Set the logged in user
          * @returns {{type}}
          */
-        function loginUser () {
+        function loginUser (payload) {
             return {
                 type: LOGIN_USER,
+                token: payload
             }
         }
 
@@ -50,13 +50,82 @@
             }
         }
 
+        /**
+         * Clear the token
+         * @returns {{type}}
+         */
+        function clearToken () {
+            return {
+                type: CLEAR_TOKEN,
+                receivedAt: Date.now()
+            }
+        }
 
+        /**
+         * Set the current organisation
+         * @param payload
+         * @returns {{type, profile: *,id : number, receivedAt: number}}
+         */
+        function receiveOrganisation (payload) {
+            return {
+                type: RECEIVE_ORGANISATION,
+                profile: payload.profile,
+                id: payload.id,
+                receivedAt: Date.now()
+            }
+        }
 
-        window.OC.actions = {
-            requestUser,
+        /**
+         * Clears the organisation data
+         * @returns {{type}}
+         */
+        function clearOrganisation () {
+            return {
+                type: CLEAR_ORGANISATION
+            }
+        }
+
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveClientId (payload) {
+            return {
+                type: RECEIVE_CLIENT_ID,
+                clientId: payload,
+                receivedAt: Date.now()
+            }
+        }
+
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveConfig (payload) {
+            return {
+                type: RECEIVE_CONFIG,
+                clientId: payload.clientId,
+                organisationId: payload.organisationId,
+                tokenRedirectUri: payload.tokenRedirectUri,
+                authClientId: payload.authClientId,
+                authHostUrl: payload.authHostUrl,
+                apiHostUrl: payload.apiHostUrl,
+                environment: payload.environment,
+                receivedAt: Date.now()
+            }
+        }
+
+        Ordercloud.actions = {
             receiveUser,
             loginUser,
-            logoutUser
+            logoutUser,
+            clearToken,
+            receiveOrganisation,
+            clearOrganisation,
+            receiveClientId,
+            receiveConfig
         }
 
     }());

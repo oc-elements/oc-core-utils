@@ -1,4 +1,5 @@
 <link rel="import" href="../iron-ajax/iron-request.html">
+<link rel="import" href="oc-store.html">
 <iron-request id="xhr"></iron-request>
 <script>
     /*
@@ -13,7 +14,7 @@
              * @polymer
              * @mixinClass
              */
-        class OCApi extends superclass {
+        class OCApi extends Ordercloud.ReduxMixin(superclass ){
             constructor() {
                 super();
             }
@@ -64,19 +65,24 @@
                 };
             }
 
+            // Element class can define custom element reactions
+            connectedCallback() {
+                super.connectedCallback();
+                //Using this because of the statePath that does not seem to update fast enough
+                const state = this.getState();
+            }
+
             ready() {
                 super.ready();
             }
 
             /**
              * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
-             * @event expired-token event if token has expired
              * @param uri un generated uri on containing the path after /resource in api-docs
              * @returns {string} uri that has the host and /resource prepended
-             * @private
              */
             _generateUrl(uri) {
-                return OC.context.apiHostUrl + 'resource/' + uri;
+                return this.getState().config.apiHostUrl + 'resource/' + uri;
             }
 
             _normalizeError (request) {
@@ -91,8 +97,8 @@
             }
 
             _generateRequest (request) {
-                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + OC.identity.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || OC.identity.clientId;
+                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().config.clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError
