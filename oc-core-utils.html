@@ -72,6 +72,13 @@
                 const state = this.getState();
             }
 
+            // Element class can define custom element reactions
+            connectedCallback() {
+                super.connectedCallback();
+                //Using this because of the statePath that does not seem to update fast enough
+                const state = this.getState();
+            }
+
             ready() {
                 super.ready();
             }
@@ -98,7 +105,7 @@
 
             _generateRequest (request) {
                 request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().config.clientId;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  Ordercloud.select.clientId(this.getState());
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError

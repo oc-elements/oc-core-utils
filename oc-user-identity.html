@@ -97,8 +97,7 @@
 
             _storedTokenLoaded() {
                 this._storedToken = this.$.tokenStorage.value;
-                this.dispatch('loginUser', this._storedToken);
-                this._tokenLoadComplete = true;
+                this.dispatch('loginUser', this._storedToken);this._tokenLoadComplete = true;
                 console.log('Stored token loaded');
             }
 
@@ -134,7 +133,7 @@
                             }.bind(this))
                             .catch(ExpiredTokenError, function () {
                                 this._setToken(null);
-                                this.dispatch('clearToken');
+                                this.dispatch('clearToken', null);
                                 this.signIn();
                             }.bind(this))
                             .catch(function (error) {
@@ -150,15 +149,15 @@
                 }
             }
 
-            /**
-             * Gets a new token from auth server
-             */
-            refreshToken() {
-                console.log('Sign-in: Requesting new token');
-                //clear the current token
-                this.dispatch('clearToken');
-                this._requestImplicitGrant();
-            }
+          /**
+           * Gets a new token from auth server
+           */
+          refreshToken() {
+              console.log('Sign-in: Requesting new token');
+              //clear the current token
+              this.dispatch('clearToken');
+              this._requestImplicitGrant();
+          }
 
             _routeChanged(route, redirectPattern, tokenLoadComplete) {
 
@@ -191,18 +190,18 @@
             _setToken(jwtToken) {
                 if (jwtToken) {
                     var jwtClaimSetEncoded = jwtToken.split(".")[1];
-                    this.dispatch('loginUser',jwtToken)
+                    this.dispatch('loginUser', jwtToken)
 
                 } else {
                     this.dispatch('clearToken');
                 }
             }
 
-            signOut() {
-                this.$.tokenStorage.value = null;
-                this.$.tokenStorage.save();
-                this._setToken(null);
-                this.dispatch('logoutUser');
+          signOut() {
+              this.$.tokenStorage.value = null;
+              this.$.tokenStorage.save();
+              this._setToken(null);
+              this.dispatch('logoutUser');
 
                 //redirect to login
                 this._requestSignOut();
