@@ -7,11 +7,15 @@
         const getMarketplaceClientId = state => state.organisation.clientId;
         const getOrganisationClientId = state => state.config.clientId;
 
+        /**
+         * returns the clientId of the organisation if set
+         * else return the clientID from the config
+         */
         const clientId = Reselect.createSelector(
             [getMarketplaceClientId, getOrganisationClientId],
             (marketplace) => {
 
-                if((getOrganisationClientId == "")||(marketplace)){
+                if((getOrganisationClientId.toString() === "")||(marketplace)){
                         return getMarketplaceClientId;
                 }else{
                     return getOrganisationClientId;

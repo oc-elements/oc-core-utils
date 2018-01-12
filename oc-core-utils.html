@@ -98,7 +98,7 @@
 
             _generateRequest (request) {
                 request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().config.clientId;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError
