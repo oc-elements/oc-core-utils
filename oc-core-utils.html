@@ -61,7 +61,7 @@
                             {"key": 505, "text": "HTTP Version Not Supported"},
                             {"key": 506, "text": "Variant Also Negotiates"}
                         ]
-                    }
+                    },
                 };
             }
 
@@ -98,7 +98,7 @@
 
             _generateRequest (request) {
                 request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  this.getState().clientId;
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  Ordercloud.select.clientId(this.getState());
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError

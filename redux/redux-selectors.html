@@ -4,30 +4,24 @@
     (function() {
 
 
-        const getMarketplaceClientId = state => state.organisation.clientId;
-        const getOrganisationClientId = state => state.config.clientId;
+        const organisation = (state) => state.organisation.clientId;
+        const config = (state) => state.config.clientId;
 
         /**
          * returns the clientId of the organisation if set
          * else return the clientID from the config
          */
         const clientId = Reselect.createSelector(
-            [getMarketplaceClientId, getOrganisationClientId],
-            (marketplace) => {
-
-                if((getOrganisationClientId.toString() === "")||(marketplace)){
-                        return getMarketplaceClientId;
-                }else{
-                    return getOrganisationClientId;
-                }
+            [organisation, config],
+            (org_clientId , clientId) => {
+                return ((org_clientId !== "") ? org_clientId : clientId)
             }
         );
 
 
         var Ordercloud = window.Ordercloud || {};
         Ordercloud.select = {
-            getUser,
-            getLoggedIn
+            clientId
         }
 
     }());
