@@ -52,7 +52,6 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    console.error("Identity Action Type not found: " + action.type);
                     return state
             }
         }
@@ -85,7 +84,6 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    console.error("Organisation Action Type not found: " + action.type);
                     return state
             }
         }
@@ -116,7 +114,6 @@
                         lastUpdated: action.receivedAt
                     });
                 default:
-                    console.error("Config Action Type not found: " + action.type);
                     return state
             }
         }
