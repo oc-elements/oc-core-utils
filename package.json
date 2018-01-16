@@ -6,6 +6,9 @@
   "directories": {
     "test": "test"
   },
+  "scripts": {
+    "postinstall": "bower install"
+  },
   "dependencies": {
     "bower-npm-resolver": "^0.8.1",
     "redux": "^3.7.2",
