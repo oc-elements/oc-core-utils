@@ -6,14 +6,17 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-    "postinstall": "bower install"
-  },
   "dependencies": {
+    "@polymer/iron-ajax": "git://github.com/PolymerElements/iron-ajax.git#3.0-preview",
+    "@polymer/polymer": "^2.3.1",
+    "bignumber.js": "^5.0.0",
     "bower-npm-resolver": "^0.8.1",
+    "moment": "^2.20.1",
+    "oc-user-api": "git://github.com/oc-elements/oc-user-api#2.x",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "webcomponentsjs": "^1.0.2"
   },
   "devDependencies": {},
   "scripts": {
