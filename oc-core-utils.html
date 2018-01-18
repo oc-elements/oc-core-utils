@@ -104,8 +104,19 @@
             }
 
             _generateRequest (request) {
+                return _generateRequest(request, false);
+            }
+
+            _generateRequest (request, marketplace) {
+
+                //check if the call is a marketplace connection
+                let clientId =  this.getState().config.clientId;
+                if(!marketplace){
+                    clientId = Ordercloud.select.clientId(this.getState());
+                }
+
                 request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] ||  Ordercloud.select.clientId(this.getState());
+                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
                 var ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError
