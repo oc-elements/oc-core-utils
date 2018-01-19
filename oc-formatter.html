@@ -31,8 +31,8 @@
                   return new BigNumber(number || 0);
                 }
 
-            formatMoneyamount() {
-              return this.formatNumber(amount).toFixed(2);
+            formatMoneyAmount(amount) {
+              return `R ${this.formatNumber(amount).toFixed(2)}`;
             }
 
             formatDate(date, parseFormat, format) {
