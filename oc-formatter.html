@@ -46,23 +46,15 @@
 			formatMoneyAmount(amount) {
 				if (!amount) return;
 				return `R ${this.formatNumber(amount).toFixed(2)
-                    .replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
+					.replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
 			}
 
-			formatDate(date, parseFormat, format) {
-				var parsedDate = this.formatMoment(date, parseFormat);
-				return parsedDate.format(format || 'DD MMM @ HH:ss');
-			}
-
-			formatMoment(date, format) {
-				if (date instanceof Date) {
-					return moment(date);
+			formatDate(date, format) {
+				if (!(date instanceof Date)) {
+					date = new Date(date);
 				}
-				return moment(date, format || 'DD MMM YYYY HH:ss');
-			}
 
-			newMoment() {
-				return moment();
+				return moment(date).format(format || 'DD MMM YYYY HH:ss');
 			}
 		}
 	);
