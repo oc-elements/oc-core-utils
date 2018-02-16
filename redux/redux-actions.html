@@ -30,8 +30,6 @@
         }
 
         function fetchUser(state) {
-
-
             return dispatch => {
                 dispatch(requestUser());
                 return fetch(_generateRequest('/users/logged_in', state))
@@ -39,7 +37,6 @@
                     .then(json => dispatch(receiveUser(json)))
             }
         }
-
 
         function shouldFetchUser(state) {
             const user = state.identity.user;
@@ -146,7 +143,7 @@
             // This is useful for avoiding a network request if
             // a cached value is already available.
 
-            return (dispatch, getState, id) => {
+            return (dispatch, getState) => {
                 if (shouldFetchOrganisation(id, getState())) {
                     // Dispatch a thunk from thunk!
                     return dispatch(fetchOrganisation(id, getState()));
