@@ -45,7 +45,7 @@
 
 			formatMoneyAmount(amount) {
 				if (!amount) return;
-				return `R ${this.formatNumber(amount).toFixed(2)
+				return `R${this.formatNumber(amount).toFixed(2)
 					.replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
 			}
 
