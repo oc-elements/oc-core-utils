@@ -29,10 +29,24 @@
             }
         }
 
-        function fetchUser() {
+        function fetchUser(state) {
+
+            var myHeaders = new Headers();
+
+            myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
+            myHeaders.append('X-Ordercloud-Organisation', state.config.clientId);
+
+            var myInit = { method: 'GET',
+                headers: myHeaders,
+                mode: 'cors',
+                cache: 'default' };
+
+            var myRequest = new Request(_generateUrl('users/logged_in'), myInit);
+
+
             return dispatch => {
                 dispatch(requestUser());
-                return fetch(_generateUrl('users/logged_in'))
+                return fetch(myRequest)
                     .then(response => response.json())
                     .then(json => dispatch(receiveUser(json)))
             }
@@ -60,7 +74,7 @@
             return (dispatch, getState) => {
                 if (shouldFetchUser(getState())) {
                     // Dispatch a thunk from thunk!
-                    return dispatch(fetchUser());
+                    return dispatch(fetchUser(getState()));
                 } else {
                     // Let the calling code know there's nothing to wait for.
                     return Promise.resolve();
