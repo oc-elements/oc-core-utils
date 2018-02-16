@@ -29,6 +29,46 @@
             }
         }
 
+        function fetchUser() {
+            return dispatch => {
+                dispatch(requestUser());
+                return fetch(_generateUrl('users/logged_in'))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveUser(json)))
+            }
+        }
+
+
+        function shouldFetchUser(state) {
+            const user = state.identity.user;
+            if (!user) {
+                return true
+            } else if (user.isFetching) {
+                return false
+            } else {
+                return user.didInvalidate
+            }
+        }
+
+        function fetchUserIfNeeded() {
+            // Note that the function also receives getState()
+            // which lets you choose what to dispatch next.
+
+            // This is useful for avoiding a network request if
+            // a cached value is already available.
+
+            return (dispatch, getState) => {
+                if (shouldFetchUser(getState())) {
+                    // Dispatch a thunk from thunk!
+                    return dispatch(fetchUser());
+                } else {
+                    // Let the calling code know there's nothing to wait for.
+                    return Promise.resolve();
+                }
+            }
+        }
+
+
         /**
          * Set the logged in user
          * @returns {{type}}
@@ -99,6 +139,36 @@
         }
 
         /**
+         * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
+         * @param uri un generated uri on containing the path after /resource in api-docs
+         * @returns {string} uri that has the host and /resource prepended
+         */
+        function _generateUrl(uri){
+            return this.getState().config.apiHostUrl + 'resource/' + uri;
+        }
+
+        function _generateRequest (request) {
+            return _generateRequest(request, false);
+        }
+
+        function _generateRequest (request, marketplace) {
+
+            //check if the call is a marketplace connection
+            let clientId =  this.getState().config.clientId;
+            if(!marketplace){
+                clientId = Ordercloud.select.clientId(this.getState());
+            }
+
+            request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
+            request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
+            var ironRequest = request.generateRequest();
+            request.headers = {};
+            //allows the errors to bubble up and be caught by window.oneError
+            request.bubbles = true;
+            return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+        }
+
+        /**
          *
          * @param payload
          * @returns {{type, clientId: *, receivedAt: number}}
@@ -125,7 +195,8 @@
             receiveOrganisation,
             clearOrganisation,
             receiveClientId,
-            receiveConfig
+            receiveConfig,
+            fetchUserIfNeeded
         }
 
     }());

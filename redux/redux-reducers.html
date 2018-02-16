@@ -3,6 +3,7 @@
 <script>
 
     //users
+    const INVALIDATE_USER = 'INVALIDATE_USER';
     const REQUEST_USER=  'REQUEST_USER';
     const RECEIVE_USER = 'RECEIVE_USER';
     const LOGIN_USER = 'LOGIN_USER';
@@ -21,18 +22,30 @@
 
         function identity(
             state = {
-                user: [],
+                user: null,
                 loggedIn: false,
-                token: ""
+                token: "",
+                didInvalidate: false,
+                isFetching: false,
             },
             action
         ) {
             switch (action.type) {
+                case INVALIDATE_USER:
+                    return Object.assign({}, state, {
+                        didInvalidate: true
+                    });
+                case REQUEST_USER:
+                    return Object.assign({}, state, {
+                        isFetching: true,
+                        didInvalidate: false
+                    });
                 case LOGOUT_USER:
                     return Object.assign({}, state, {
                         loggedIn: false,
                         user: [],
-                        token: ""
+                        token: "",
+                        didInvalidate: true
                     });
                 case LOGIN_USER:
                     return Object.assign({}, state, {
@@ -45,13 +58,6 @@
                         loggedIn: true,
                         lastUpdated: action.receivedAt
                     });
-
-                case CLEAR_TOKEN:
-                    return Object.assign({}, state, {
-                        token: "",
-                        lastUpdated: action.receivedAt
-                    });
-
                 case CLEAR_TOKEN:
                     return Object.assign({}, state, {
                         token: "",
