@@ -31,22 +31,10 @@
 
         function fetchUser(state) {
 
-            var myHeaders = new Headers();
-
-            myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
-            myHeaders.append('X-Ordercloud-Organisation', state.config.clientId);
-
-            var myInit = { method: 'GET',
-                headers: myHeaders,
-                mode: 'cors',
-                cache: 'default' };
-
-            var myRequest = new Request(_generateUrl('users/logged_in'), myInit);
-
 
             return dispatch => {
                 dispatch(requestUser());
-                return fetch(myRequest)
+                return fetch(_generateRequest('/users/logged_in', state))
                     .then(response => response.json())
                     .then(json => dispatch(receiveUser(json)))
             }
@@ -129,6 +117,47 @@
             }
         }
 
+
+        function fetchOrganisation(id, state) {
+            return dispatch => {
+                dispatch(requestUser());
+                return fetch(_generateRequest('/organisation/' + id, state))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveOrganisation(json)))
+            }
+        }
+
+
+        function shouldFetchOrganisation(id,state) {
+            const organisation = state.organisation.profile;
+            if ((!organisation) || (organisation.profile.id !== id)) {
+                return true
+            } else if (organisation.isFetching) {
+                return false
+            } else {
+                return organisation.didInvalidate
+            }
+        }
+
+        function fetchOrganisationIfNeeded(id) {
+            // Note that the function also receives getState()
+            // which lets you choose what to dispatch next.
+
+            // This is useful for avoiding a network request if
+            // a cached value is already available.
+
+            return (dispatch, getState, id) => {
+                if (shouldFetchOrganisation(id, getState())) {
+                    // Dispatch a thunk from thunk!
+                    return dispatch(fetchOrganisation(id, getState()));
+                } else {
+                    // Let the calling code know there's nothing to wait for.
+                    return Promise.resolve();
+                }
+            }
+        }
+
+
         /**
          * Clears the organisation data
          * @returns {{type}}
@@ -157,29 +186,34 @@
          * @param uri un generated uri on containing the path after /resource in api-docs
          * @returns {string} uri that has the host and /resource prepended
          */
-        function _generateUrl(uri){
-            return this.getState().config.apiHostUrl + 'resource/' + uri;
+        function _generateUrl(uri, state){
+            return state.config.apiHostUrl + 'resource/' + uri;
         }
 
         function _generateRequest (request) {
             return _generateRequest(request, false);
         }
 
-        function _generateRequest (request, marketplace) {
+        function _generateRequest (uri, state, marketplace) {
+
+            var myHeaders = new Headers();
 
             //check if the call is a marketplace connection
-            let clientId =  this.getState().config.clientId;
+            let clientId =  state.config.clientId;
             if(!marketplace){
-                clientId = Ordercloud.select.clientId(this.getState());
+                clientId = Ordercloud.select.clientId(state);
             }
 
-            request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
-            request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
-            var ironRequest = request.generateRequest();
-            request.headers = {};
-            //allows the errors to bubble up and be caught by window.oneError
-            request.bubbles = true;
-            return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+            myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
+            myHeaders.append('X-Ordercloud-Organisation', clientId);
+
+            var myInit = { method: 'GET',
+                headers: myHeaders,
+                mode: 'cors',
+                cache: 'default' };
+
+            return  new Request(uri, myInit);
+
         }
 
         /**
@@ -210,7 +244,8 @@
             clearOrganisation,
             receiveClientId,
             receiveConfig,
-            fetchUserIfNeeded
+            fetchUserIfNeeded,
+            fetchOrganisationIfNeeded
         }
 
     }());

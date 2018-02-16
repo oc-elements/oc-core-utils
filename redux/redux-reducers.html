@@ -70,18 +70,30 @@
 
         function organisation(
             state = {
-                profile: [],
+                profile: null,
                 clientId: "",
-                default: 0
+                default: 0,
+                didInvalidate: false,
+                isFetching: false,
             },
             action
         ) {
             switch (action.type) {
+
+                case INVALIDATE_ORGANISATION:
+                    return Object.assign({}, state, {
+                        didInvalidate: true
+                    });
+                case REQUEST_ORGANISATION:
+                    return Object.assign({}, state, {
+                        isFetching: true,
+                        didInvalidate: false
+                    });
                 case RECEIVE_ORGANISATION:
                     return Object.assign({}, state, {
                         id : action.id,
                         profile: action.profile,
-                        lastUpdated: action.receivedAt
+                        lastUpdated: action.receivedAt,
                     });
                 case CLEAR_ORGANISATION:
                     return Object.assign({}, state, {
