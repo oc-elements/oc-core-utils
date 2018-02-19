@@ -103,11 +103,8 @@
                 throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
             }
 
-            _generateRequest (request) {
-                return _generateRequest(request, false);
-            }
 
-            _generateRequest (request, marketplace) {
+            _generateRequest (request, marketplace =false) {
 
                 //check if the call is a marketplace connection
                 let clientId =  this.getState().config.clientId;

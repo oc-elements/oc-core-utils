@@ -1,8 +1,8 @@
 <script src="../../../node_modules/reselect/dist/reselect.js"></script>
 
 <script>
+    var Ordercloud = window.Ordercloud || {};
     (function() {
-
 
         const organisation = (state) => state.organisation.clientId;
         const config = (state) => state.config.clientId ;
@@ -18,8 +18,6 @@
             }
         );
 
-
-        var Ordercloud = window.Ordercloud || {};
         Ordercloud.select = {
             clientId
         }

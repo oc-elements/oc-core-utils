@@ -13,7 +13,7 @@
                     callAPI,
                     shouldCallAPI = () => true,
                     payload = {}
-            } = action
+                } = action
 
                 if (!types) {
                     // Normal action: pass it on
@@ -46,20 +46,20 @@
 
                 return callAPI().then(
                     response =>
-                dispatch(
-                    Object.assign({}, payload, {
-                        response,
-                        type: successType
-                    })
-                ),
+                        dispatch(
+                            Object.assign({}, payload, {
+                                response,
+                                type: successType
+                            })
+                        ),
                     error =>
-                dispatch(
-                    Object.assign({}, payload, {
-                        error,
-                        type: failureType
-                    })
+                        dispatch(
+                            Object.assign({}, payload, {
+                                error,
+                                type: failureType
+                            })
+                        )
                 )
-            )
             }
         }
 
