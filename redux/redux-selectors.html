@@ -14,8 +14,8 @@
          */
         const clientId = Reselect.createSelector(
             [organisation, config],
-            (org_clientId, clientId, marketplace) => {
-                return ((!marketplace && (org_clientId !== "")) ? org_clientId : clientId)
+            (org_clientId, clientId) => {
+                return ((org_clientId) ? org_clientId : clientId)
             }
         );
 
