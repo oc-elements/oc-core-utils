@@ -24,6 +24,11 @@
     const RECEIVE_ACCOUNTS = 'RECEIVE_ACCOUNTS';
     const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
     const RECEIVE_BALANCE = 'RECEIVE_BALANCE';
+    const RECEIVE_DEFAULT = 'RECEIVE_DEFAULT';
+    const REQUEST_DEPOSIT_ACCOUNTS = 'REQUEST_DEPOSIT_ACCOUNTS';
+    const RECEIVE_DEPOSIT_ACCOUNTS = 'RECEIVE_DEPOSIT_ACCOUNTS';
+    const REQUEST_WITHDRAW_ACCOUNTS = 'REQUEST_WITHDRAW_ACCOUNTS';
+    const RECEIVE_WITHDRAW_ACCOUNTS = 'RECEIVE_WITHDRAW_ACCOUNTS';
 
     //config
     const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
@@ -187,6 +192,8 @@
 
         function accounts(state = {
                               available: null,
+                              withdraw: null,
+                              deposit: null,
                               default: 0,
                               balance: null,
                               didInvalidate: false,
@@ -209,9 +216,34 @@
                         available: action.accounts,
                         lastUpdated: action.receivedAt,
                     });
+                case REQUEST_DEPOSIT_ACCOUNTS:
+                    return Object.assign({}, state, {
+                        isFetching: true,
+                        didInvalidate: false
+                    });
+                case RECEIVE_DEPOSIT_ACCOUNTS:
+                    return Object.assign({}, state, {
+                        deposit: action.deposit,
+                        lastUpdated: action.receivedAt,
+                    });
+                case REQUEST_WITHDRAW_ACCOUNTS:
+                    return Object.assign({}, state, {
+                        isFetching: true,
+                        didInvalidate: false
+                    });
+                case RECEIVE_WITHDRAW_ACCOUNTS:
+                    return Object.assign({}, state, {
+                        withdraw: action.withdraw,
+                        lastUpdated: action.receivedAt,
+                    });
                 case RECEIVE_BALANCE:
                     return Object.assign({}, state, {
-                        balance : action.balance,
+                        balance: action.balance,
+                        lastUpdated: action.receivedAt,
+                    });
+                case RECEIVE_DEFAULT:
+                    return Object.assign({}, state, {
+                        default: action.default,
                         lastUpdated: action.receivedAt,
                     });
                 case CLEAR_ACCOUNTS:

@@ -29,9 +29,22 @@
             }
         );
 
+
+        /**
+         * returns the defaultAccount which is the ShopToShop account
+         */
+        const defaultAccount = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+                return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
+            }
+        );
+
+
         Ordercloud.select = {
             clientId,
-            balance
+            balance,
+            defaultAccount
         }
 
     }());
