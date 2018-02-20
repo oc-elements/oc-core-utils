@@ -245,9 +245,27 @@
          * @returns {{type, clientId: *, receivedAt: number}}
          */
         function receiveAccounts(payload) {
-            return {
-                type: RECEIVE_ACCOUNTS,
-                accounts: payload,
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_ACCOUNTS,
+                    accounts: payload,
+                    receivedAt: Date.now()
+                });
+
+                return Promise.resolve();
+            }
+        }
+
+        /**
+         *
+         * receive the balance
+         * @param state
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveBalance(state) {
+            return{
+                type: RECEIVE_BALANCE,
+                balance: Ordercloud.select.balance(state),
                 receivedAt: Date.now()
             }
         }
@@ -257,7 +275,7 @@
                 dispatch(requestAccounts());
                 return fetch(_generateRequest('organisations/' + id + '/accounts', getState()))
                     .then(response => response.json())
-                    .then(json => dispatch(receiveAccounts(json)))
+                    .then(json => dispatch(receiveAccounts(json.results)))
             }
         }
 
@@ -283,7 +301,7 @@
             return (dispatch, getState) => {
                 if (shouldFetchAccounts(getState())) {
                     // Dispatch a thunk from thunk!
-                    return dispatch(fetchAccounts(id));
+                    return dispatch(fetchAccounts(id)).then(() => dispatch(receiveBalance(getState())));
                 } else {
                     // Let the calling code know there's nothing to wait for.
                     return Promise.resolve();
@@ -361,7 +379,8 @@
             fetchUserIfNeeded,
             fetchOrganisationIfNeeded,
             fetchClientIdIfNeeded,
-            fetchAccountsIfNeeded
+            fetchAccountsIfNeeded,
+            receiveBalance
         }
 
     }());

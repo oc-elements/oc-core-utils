@@ -23,6 +23,7 @@
     const REQUEST_ACCOUNTS = 'REQUEST_ACCOUNTS';
     const RECEIVE_ACCOUNTS = 'RECEIVE_ACCOUNTS';
     const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
+    const RECEIVE_BALANCE = 'RECEIVE_BALANCE';
 
     //config
     const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
@@ -187,6 +188,7 @@
         function accounts(state = {
                               available: null,
                               default: 0,
+                              balance: null,
                               didInvalidate: false,
                               isFetching: false,
                               lastUpdated: null
@@ -207,11 +209,17 @@
                         available: action.accounts,
                         lastUpdated: action.receivedAt,
                     });
+                case RECEIVE_BALANCE:
+                    return Object.assign({}, state, {
+                        balance : action.balance,
+                        lastUpdated: action.receivedAt,
+                    });
                 case CLEAR_ACCOUNTS:
                     return Object.assign({}, state, {
                         available: null,
                         default: null,
-                        lastUpdated: null
+                        lastUpdated: null,
+                        balance: null
                     });
                 default:
                     return state

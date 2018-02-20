@@ -2,10 +2,11 @@
 
 <script>
     var Ordercloud = window.Ordercloud || {};
-    (function() {
+    (function () {
 
         const organisation = (state) => state.organisation.clientId;
-        const config = (state) => state.config.clientId ;
+        const config = (state) => state.config.clientId;
+        const accounts = (state) => state.accounts;
 
         /**
          * returns the clientId of the organisation if set
@@ -13,13 +14,24 @@
          */
         const clientId = Reselect.createSelector(
             [organisation, config],
-            (org_clientId , clientId, marketplace) => {
-                return ((!marketplace && (org_clientId !== ""))  ? org_clientId : clientId)
+            (org_clientId, clientId, marketplace) => {
+                return ((!marketplace && (org_clientId !== "")) ? org_clientId : clientId)
+            }
+        );
+
+        /**
+         * returns the balance of the ShopToShop account
+         */
+        const balance = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+                return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
             }
         );
 
         Ordercloud.select = {
-            clientId
+            clientId,
+            balance
         }
 
     }());
