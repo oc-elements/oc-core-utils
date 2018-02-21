@@ -1,11 +1,12 @@
 <script src="../../../node_modules/reselect/dist/reselect.js"></script>
 
 <script>
-    (function() {
-
+    var Ordercloud = window.Ordercloud || {};
+    (function () {
 
         const organisation = (state) => state.organisation.clientId;
-        const config = (state) => state.config.clientId ;
+        const config = (state) => state.config.clientId;
+        const accounts = (state) => state.accounts;
 
         /**
          * returns the clientId of the organisation if set
@@ -13,15 +14,37 @@
          */
         const clientId = Reselect.createSelector(
             [organisation, config],
-            (org_clientId , clientId, marketplace) => {
-                return ((!marketplace && (org_clientId !== ""))  ? org_clientId : clientId)
+            (org_clientId, clientId) => {
+                return ((org_clientId) ? org_clientId : clientId)
+            }
+        );
+
+        /**
+         * returns the balance of the ShopToShop account
+         */
+        const balance = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+                return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
             }
         );
 
 
-        var Ordercloud = window.Ordercloud || {};
+        /**
+         * returns the defaultAccount which is the ShopToShop account
+         */
+        const defaultAccount = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+                return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
+            }
+        );
+
+
         Ordercloud.select = {
-            clientId
+            clientId,
+            balance,
+            defaultAccount
         }
 
     }());
