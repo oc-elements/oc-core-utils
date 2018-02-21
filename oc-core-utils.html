@@ -204,8 +204,6 @@
             // Element class can define custom element reactions
             connectedCallback() {
                 super.connectedCallback();
-                //Using this because of the statePath that does not seem to update fast enough
-                const state = this.getState();
             }
 
             ready() {
@@ -243,7 +241,7 @@
 
                 request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
                 request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
-                var ironRequest = request.generateRequest();
+                let ironRequest = request.generateRequest();
                 request.headers = {};
                 //allows the errors to bubble up and be caught by window.oneError
                 request.bubbles = true;
