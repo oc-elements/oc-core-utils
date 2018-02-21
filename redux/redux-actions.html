@@ -863,16 +863,36 @@
                 if (shouldFetchAccounts(getState())) {
                     // Dispatch a thunk from thunk!
                     return dispatch(fetchAccounts(id))
-                        .then(() => dispatch(receiveDefault(getState())))
-                        .then(() => dispatch(fetchWithdrawAccounts(id)))
-                        .then(() => dispatch(fetchDepositAccounts(id)))
-                        .then(() => dispatch(receiveBalance(getState())));
+                        .then(
+                            () => Promise.all([
+                                dispatch(receiveDefault(getState())),
+                                dispatch(fetchWithdrawAccounts(id)),
+                                dispatch(fetchDepositAccounts(id))
+                            ])
+                        ).then(() => dispatch(receiveBalance(getState())));
                 } else {
                     // Let the calling code know there's nothing to wait for.
                     return Promise.resolve();
                 }
             }
         }
+
+        /**
+         *
+         * Invalidate the current account fetch
+         */
+        function InvalidateAccounts() {
+            return (dispatch) => {
+                dispatch({
+                    type: INVALIDATE_ACCOUNTS
+                });
+                // Let the calling code know there's nothing to wait for.
+                return Promise.resolve();
+            }
+
+        }
+
+
 
 
         /**
@@ -944,6 +964,7 @@
             fetchUserIfNeeded,
             fetchOrganisationIfNeeded,
             fetchClientIdIfNeeded,
+            InvalidateAccounts,
             fetchAccountsIfNeeded,
             receiveBalance
         }

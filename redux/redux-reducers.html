@@ -69,7 +69,8 @@
                     return Object.assign({}, state, {
                         user: action.user,
                         loggedIn: true,
-                        lastUpdated: action.receivedAt
+                        lastUpdated: action.receivedAt,
+                        isFetching: false
                     });
                 case CLEAR_TOKEN:
                     return Object.assign({}, state, {
@@ -105,6 +106,7 @@
                         id: action.id,
                         profile: action.profile,
                         lastUpdated: action.receivedAt,
+                        isFetching: false
                     });
                 case CLEAR_ORGANISATION:
                     return Object.assign({}, state, {
@@ -115,75 +117,8 @@
                 case RECEIVE_CLIENT_ID:
                     return Object.assign({}, state, {
                         clientId: action.clientId,
-                        lastUpdated: action.receivedAt
-                    });
-                default:
-                    return state
-            }
-        }
-
-        function organisations(state = {
-                                   profile: null,
-                                   default: 0,
-                                   didInvalidate: false,
-                                   isFetching: false,
-                               },
-                               action) {
-            switch (action.type) {
-
-                case INVALIDATE_ORGANISATION:
-                    return Object.assign({}, state, {
-                        didInvalidate: true
-                    });
-                case REQUEST_ORGANISATION:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
-                    });
-                case RECEIVE_ORGANISATION:
-                    return Object.assign({}, state, {
-                        id: action.id,
-                        profile: action.profile,
                         lastUpdated: action.receivedAt,
-                    });
-                case CLEAR_ORGANISATION:
-                    return Object.assign({}, state, {
-                        id: 0,
-                        profile: [],
-                        clientId: ""
-                    });
-                case RECEIVE_CLIENT_ID:
-                    return Object.assign({}, state, {
-                        clientId: action.clientId,
-                        lastUpdated: action.receivedAt
-                    });
-                default:
-                    return state
-            }
-        }
-
-        function config(state = {
-                            loaded: false,
-                            clientId: "",
-                            tokenRedirectUri: "",
-                            authClientId: "",
-                            authHostUrl: "",
-                            apiHostUrl: "",
-                            environment: ""
-                        },
-                        action) {
-            switch (action.type) {
-                case RECEIVE_CONFIG:
-                    return Object.assign({}, state, {
-                        loaded: true,
-                        clientId: action.clientId,
-                        organisationId: action.organisationId,
-                        tokenRedirectUri: action.tokenRedirectUri,
-                        authClientId: action.authClientId,
-                        authHostUrl: action.authHostUrl,
-                        apiHostUrl: action.authHostUrl,
-                        environment: action.environment,
-                        lastUpdated: action.receivedAt
+                        isFetching: false
                     });
                 default:
                     return state
@@ -214,7 +149,7 @@
                 case RECEIVE_ACCOUNTS:
                     return Object.assign({}, state, {
                         available: action.accounts,
-                        lastUpdated: action.receivedAt,
+                        lastUpdated: action.receivedAt
                     });
                 case REQUEST_DEPOSIT_ACCOUNTS:
                     return Object.assign({}, state, {
@@ -225,6 +160,7 @@
                     return Object.assign({}, state, {
                         deposit: action.deposit,
                         lastUpdated: action.receivedAt,
+
                     });
                 case REQUEST_WITHDRAW_ACCOUNTS:
                     return Object.assign({}, state, {
@@ -235,16 +171,20 @@
                     return Object.assign({}, state, {
                         withdraw: action.withdraw,
                         lastUpdated: action.receivedAt,
+
                     });
                 case RECEIVE_BALANCE:
                     return Object.assign({}, state, {
                         balance: action.balance,
                         lastUpdated: action.receivedAt,
+                        isFetching: false
                     });
                 case RECEIVE_DEFAULT:
                     return Object.assign({}, state, {
                         default: action.default,
                         lastUpdated: action.receivedAt,
+                        isFetching: false
+
                     });
                 case CLEAR_ACCOUNTS:
                     return Object.assign({}, state, {
