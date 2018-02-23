@@ -2,61 +2,63 @@
 <script src="../moment/min/moment.min.js"></script>
 
 <script>
-	/*
+    /*
  * Ordercloud API Mixin that allows communicating with API.
  * @polymer
  * @mixinFunction
  */
-	Ordercloud = window.Ordercloud || {};
-	Ordercloud.Formatter = Polymer.dedupingMixin((superclass) =>
+    Ordercloud = window.Ordercloud || {};
+    Ordercloud.Formatter = Polymer.dedupingMixin((superclass) =>
 
-		/*
+        /*
              * @polymer
              * @mixinClass
              */
-		class OCFormatter extends superclass {
-			constructor() {
-				super();
-			}
+        class OCFormatter extends superclass {
+            constructor() {
+                super();
+            }
 
-			ready() {
-				super.ready();
-			}
+            ready() {
+                super.ready();
+            }
 
-			formatNumber(number) {
-				if (isNaN(number)) {
-					return new BigNumber(0);
-				}
+            formatNumber(number) {
+                if (isNaN(number)) {
+                    return new BigNumber(0);
+                }
 
-				return new BigNumber(number || 0);
-			}
+                return new BigNumber(number || 0);
+            }
 
-			// Format South African Mobile Number
-			formatMobileNumber(number) {
-				const numbers = number.replace(/\D/g, ''),
-					char = {0: '(+', 2: ') ', 4: ' ', 7: ' '};
-				number = '';
-				for (let i = 0; i < numbers.length; i++) {
-					number += (char[i] || '') + numbers[i];
-				}
+            // Format South African Mobile Number
+            formatMobileNumber(number) {
+                if(!number) return;
 
-				return number;
-			}
+                const numbers = number.replace(/\D/g, ''),
+                    char = {0: '(+', 2: ') ', 4: ' ', 7: ' '};
+                number = '';
+                for (let i = 0; i < numbers.length; i++) {
+                    number += (char[i] || '') + numbers[i];
+                }
 
-			formatMoneyAmount(amount) {
-				if (!amount) return;
-				return `R ${this.formatNumber(amount).toFixed(2)
-					.replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
-			}
+                return number;
+            }
 
-			formatDate(date, format) {
-				if (!(date instanceof Date)) {
-					date = new Date(date);
-				}
+            formatMoneyAmount(amount) {
+                if (amount ===undefined) return;
+                return `R${this.formatNumber(amount).toFixed(2)
+                    .replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
+            }
 
-				return moment(date).format(format || 'DD MMM YYYY HH:ss');
-			}
-		}
-	);
+            formatDate(date, format) {
+                if (!(date instanceof Date)) {
+                    date = new Date(date);
+                }
+
+                return moment(date).format(format || 'DD MMM YYYY HH:ss');
+            }
+        }
+    );
 
 </script>
