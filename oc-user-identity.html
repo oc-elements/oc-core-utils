@@ -180,10 +180,10 @@
                 if(this._tokenReady) {
                     console.log('Pushing window state');
                     //window.history.pushState(null, '', this._postAuthPage);
-                    if (this._postAuthPage === null) {
-                        this._postAuthPage = "home"
+                    if ((this._postAuthPage === null) || (this._postAuthPage.indexOf('oauth') !== -1)){
+                        this._postAuthPage = "/"
                     }
-                    window.location = this._postAuthPage;
+                    window.location.href = this._postAuthPage;
                 }
             }
 
