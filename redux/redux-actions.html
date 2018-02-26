@@ -103,6 +103,22 @@
             }
         }
 
+
+        /**
+         *
+         * Invalidate the current account fetch
+         */
+        function InvalidateUser() {
+            return (dispatch) => {
+                dispatch({
+                    type: INVALIDATE_USER
+                });
+                // Let the calling code know there's nothing to wait for.
+                return Promise.resolve();
+            }
+
+        }
+
         function requestOrganisation() {
             return {
                 type: REQUEST_ORGANISATION
