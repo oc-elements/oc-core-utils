@@ -93,7 +93,8 @@
                     throw new ExpiredTokenError();
                 }
                 if (request.xhr.response && 'message' in request.xhr.response) {
-                    throw new Error(request.xhr.response.message);
+                    const error = new Error();
+                    throw error.messageData = request.xhr.response
                 }
 
                 throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
