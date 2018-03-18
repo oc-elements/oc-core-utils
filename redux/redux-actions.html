@@ -231,7 +231,7 @@
         }
 
 
-        function shouldFetchClientId(state) {
+        function shouldFetchClientId(state, id) {
             const organisation = state.organisation;
             if ((!organisation.clientId)  || (organisation.profile.id !== id)) {
                 return true
@@ -250,7 +250,7 @@
             // a cached value is already available.
 
             return (dispatch, getState) => {
-                if (shouldFetchClientId(getState())) {
+                if (shouldFetchClientId(getState(), id)) {
                     // Dispatch a thunk from thunk!
                     return dispatch(fetchClientId(id));
                 } else {
