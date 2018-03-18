@@ -24,11 +24,11 @@
             }
 
             formatNumber(number) {
-                if (isNaN(number)) {
+                if (isNaN(number) || !number) {
                     return new BigNumber(0);
                 }
 
-                return new BigNumber(number || 0);
+                return new BigNumber(Number(number).toFixed(2) || 0);
             }
 
             // Format South African Mobile Number
