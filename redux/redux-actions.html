@@ -220,6 +220,7 @@
             }
         }
 
+
         function fetchClientId(id) {
             return (dispatch, getState) => {
                 dispatch(requestClientId());
@@ -232,7 +233,7 @@
 
         function shouldFetchClientId(state) {
             const organisation = state.organisation;
-            if (!organisation.clientId) {
+            if ((!organisation.clientId)  || (organisation.profile.id !== id)) {
                 return true
             } else if (organisation.isFetching) {
                 return false;
