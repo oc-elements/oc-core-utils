@@ -28,6 +28,18 @@
             }
         }
 
+        /**
+         * Set the markeplace flag
+         * @param payload true or false
+         * @returns {{marketplace}}
+         */
+        function receiveMarketplace(payload) {
+            return {
+                type: RECEIVE_MARKETPLACE,
+                marketplace: payload
+            }
+        }
+
         function fetchUser() {
             return (dispatch, getState)  => {
                 dispatch(requestUser());
@@ -516,7 +528,8 @@
             invalidateAccounts,
             fetchAccountsIfNeeded,
             receiveBalance,
-            receiveNoOrganisation
+            receiveNoOrganisation,
+            receiveMarketplace
         }
 
     }());

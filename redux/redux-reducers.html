@@ -9,6 +9,7 @@
     const LOGIN_USER = 'LOGIN_USER';
     const LOGOUT_USER = 'LOGOUT_USER';
     const CLEAR_TOKEN = 'CLEAR_TOKEN';
+    const RECEIVE_MARKETPLACE = 'RECEIVE_MARKETPLACE';
 
     //organisation
     const RECEIVE_ORGANISATION = 'RECEIVE_ORGANISATION';
@@ -42,6 +43,7 @@
                               token: "",
                               didInvalidate: false,
                               isFetching: false,
+                              marketplace: false
                           },
                           action) {
             switch (action.type) {
@@ -72,6 +74,10 @@
                         loggedIn: true,
                         lastUpdated: action.receivedAt,
                         isFetching: false
+                    });
+                case RECEIVE_MARKETPLACE:
+                    return Object.assign({}, state, {
+                        marketplace: action.marketplace
                     });
                 case CLEAR_TOKEN:
                     return Object.assign({}, state, {
