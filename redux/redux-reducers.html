@@ -223,7 +223,8 @@
                             authClientId: "",
                             authHostUrl: "",
                             apiHostUrl: "",
-                            environment: ""
+                            environment: "",
+							featureFlags: {}
                         },
                         action) {
             switch (action.type) {
@@ -237,7 +238,8 @@
                         authHostUrl: action.authHostUrl,
                         apiHostUrl: action.apiHostUrl,
                         environment: action.environment,
-                        lastUpdated: action.receivedAt
+                        lastUpdated: action.receivedAt,
+						featureFlags: action.featureFlags
                     });
                 default:
                     return state
