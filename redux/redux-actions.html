@@ -28,44 +28,17 @@
             }
         }
 
-        function fetchUser() {
-            return (dispatch, getState)  => {
-                dispatch(requestUser());
-                return fetch(_generateRequest('users/logged_in', getState(), true))
-                    .then(response => response.json())
-                    .then(json => dispatch(receiveUser(json)))
+        /**
+         * Set the markeplace flag
+         * @param payload true or false
+         * @returns {{marketplace}}
+         */
+        function receiveMarketplace(payload) {
+            return {
+                type: RECEIVE_MARKETPLACE,
+                marketplace: payload
             }
         }
-
-        function shouldFetchUser(state) {
-            const user = state.identity.user;
-            if (!user) {
-                return true
-            } else if (state.identity.isFetching) {
-                return false
-            } else {
-                return state.identity.didInvalidate
-            }
-        }
-
-        function fetchUserIfNeeded() {
-            // Note that the function also receives getState()
-            // which lets you choose what to dispatch next.
-
-            // This is useful for avoiding a network request if
-            // a cached value is already available.
-
-            return (dispatch, getState) => {
-                if (shouldFetchUser(getState())) {
-                    // Dispatch a thunk from thunk!
-                    return dispatch(fetchUser());
-                } else {
-                    // Let the calling code know there's nothing to wait for.
-                    return Promise.resolve();
-                }
-            }
-        }
-
 
         /**
          * Set the logged in user
@@ -75,11 +48,10 @@
             return dispatch =>{
                 dispatch({
                     type: LOGIN_USER,
-                    token: payload
+                    token : payload
                 });
                 return Promise.resolve();
             }
-
         }
 
         /**
@@ -220,6 +192,7 @@
             }
         }
 
+
         function fetchClientId(id) {
             return (dispatch, getState) => {
                 dispatch(requestClientId());
@@ -230,9 +203,9 @@
         }
 
 
-        function shouldFetchClientId(state) {
+        function shouldFetchClientId(state, id) {
             const organisation = state.organisation;
-            if (!organisation.clientId) {
+            if ((!organisation.clientId)  || (organisation.profile.id !== id)) {
                 return true
             } else if (organisation.isFetching) {
                 return false;
@@ -249,7 +222,7 @@
             // a cached value is already available.
 
             return (dispatch, getState) => {
-                if (shouldFetchClientId(getState())) {
+                if (shouldFetchClientId(getState(), id)) {
                     // Dispatch a thunk from thunk!
                     return dispatch(fetchClientId(id));
                 } else {
@@ -485,13 +458,18 @@
             return dispatch => {
                 dispatch({
                     type: RECEIVE_CONFIG,
+                    apiHostUrl: payload.apiHostUrl,
                     clientId: payload.clientId,
                     organisationId: payload.organisationId,
                     tokenRedirectUri: payload.tokenRedirectUri,
-                    authClientId: payload.authClientId,
-                    authHostUrl: payload.authHostUrl,
-                    apiHostUrl: payload.apiHostUrl,
+                    realm: payload.realm,
+                    authServerUrl: payload.authServerUrl,
+                    sslRequired: payload.sslRequired,
+                    resource: payload.resource,
+                    publicClient: payload.publicClient,
+                    confidentialPort: payload.confidentialPort,
                     environment: payload.environment,
+                    featureFlags: payload.featureFlags,
                     receivedAt: Date.now()
                 });
 
@@ -509,13 +487,13 @@
             clearOrganisation,
             receiveClientId,
             receiveConfig,
-            fetchUserIfNeeded,
             fetchOrganisationIfNeeded,
             fetchClientIdIfNeeded,
             invalidateAccounts,
             fetchAccountsIfNeeded,
             receiveBalance,
-            receiveNoOrganisation
+            receiveNoOrganisation,
+            receiveMarketplace
         }
 
     }());

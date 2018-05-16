@@ -3,10 +3,9 @@
 <link rel="import" href="../iron-location/iron-location.html">
 <link rel="import" href="../app-route/app-route.html">
 <link rel="import" href="oc-core-utils.html">
-<link rel="import" href="oc-token-requestor-behaviour.html">
+<link rel="import" href="oc-auth.html">
 <link rel="import" href="../oc-user-api/oc-user-api.html">
 <link rel="import" href="oc-store.html">
-
 
 
 <dom-module id="oc-user-identity">
@@ -14,15 +13,6 @@
         <app-location route="{{ route }}"></app-location>
         <app-route route="[[ route ]]" pattern="[[ _redirectPattern ]]" tail="{{ routeData }}"></app-route>
 
-        <oc-user-api id="usersApi"></oc-user-api>
-        <iron-localstorage
-                id="tokenStorage"
-                name="token"
-                use-raw
-                auto-save-disabled
-                on-iron-localstorage-load="_storedTokenLoaded"
-                on-iron-localstorage-load-empty="_storedTokenLoadedEmpty"
-        ></iron-localstorage>
         <iron-localstorage
                 id="postAuthPageStorage"
                 name="post-auth-page"
@@ -42,7 +32,7 @@
          * @polymer
          * @demo demo/index.html
          */
-        class OcUserIdentity extends Ordercloud.TokenRequestor(Ordercloud.ReduxMixin(Polymer.Element)) {
+        class OcUserIdentity extends Ordercloud.Auth(Ordercloud.ReduxMixin(Polymer.Element)) {
             static get is() { return 'oc-user-identity'; }
             static get properties() {
                 return {
@@ -57,32 +47,20 @@
                      * Page to after sign out.
                      */
                     signedOutPage: String,
-                    /**
-                     * The page to navigate too after login
-                     */
-                    _signInRequested : {
-                        type: Boolean,
-                        value: false
-                    },
-                    _tokenLoadComplete: {
-                        type: Boolean,
-                        value: false
-                    },
-                    _tokenReady: {
-                        type: Boolean,
-                        value: false
-                    },
                     _postAuthPage: {
                         type: String,
                         value: "/"
+                    },
+                    _loggedIn: {
+                        type:String,
+                        statePath: 'identity.loggedIn',
+                        observer: 'loadUser'
                     }
 
                 };
             }
             static get observers() {
                 return[
-                    '_routeChanged(route, _tokenRedirectUri, _tokenLoadComplete)',
-                    '_signIn(_signInRequested, _tokenLoadComplete)',
                     '_pageToAfterSignIn(_postAuthPage, _tokenReady)'
                 ]
             }
@@ -95,63 +73,8 @@
                 super.ready();
             }
 
-            _storedTokenLoaded() {
-                this._storedToken = this.$.tokenStorage.value;
-                this._tokenLoadComplete = true;
-                console.log('Stored token loaded');
-            }
-
-            _storedTokenLoadedEmpty() {
-                this._tokenLoadComplete = true;
-                console.log('No stored token');
-            }
-
             _postAuthPageStorageLoaded() {
                 this._postAuthPage = this.$.postAuthPageStorage.value;
-            }
-
-            signIn() {
-                this._signInRequested = true;
-            }
-
-            _signIn() {
-                if(this._tokenLoadComplete && this._signInRequested ) {
-                    if (this._storedToken) {
-                        console.log('Sign-in: Using stored token');
-                        this._setToken(this._storedToken);
-                        this.dispatch('loginUser', this._storedToken).then(() => this.dispatch('fetchUserIfNeeded'));
-                    } else {
-                        console.log('Sign-in: Requesting new token');
-                        this._requestImplicitGrant();
-                    }
-                }
-            }
-
-            /**
-             * Gets a new token from auth server
-             */
-            refreshToken() {
-                console.log('Sign-in: Requesting new token');
-                //clear the current token
-                this.dispatch('clearToken');
-                this._requestImplicitGrant();
-            }
-
-            _routeChanged(route, redirectPattern, tokenLoadComplete) {
-
-                if ((!redirectPattern)
-                    || (route.path.split("/").pop() !== redirectPattern.split("/").pop())
-                    || (!tokenLoadComplete)) {
-                    return;
-                }
-                if (route.__queryParams.access_token) {
-                    console.log('Token received on ' + redirectPattern);
-
-                    this.$.tokenStorage.value = route.__queryParams.access_token;
-                    this.$.tokenStorage.save();
-                    this._setToken(route.__queryParams.access_token);
-                    this._tokenReady = true;
-                }
             }
 
             _pageToAfterSignIn() {
@@ -165,24 +88,29 @@
                 }
             }
 
-            _setToken(jwtToken) {
-                if (jwtToken) {
-                    let jwtClaimSetEncoded = jwtToken.split(".")[1];
-                    this.dispatch('loginUser', jwtToken).then(() => this.dispatch('fetchUserIfNeeded'));
-
-                } else {
-                    this.dispatch('clearToken');
-                }
-            }
-
             signOut() {
-                this.$.tokenStorage.value = null;
-                this.$.tokenStorage.save();
-                this._setToken(null);
                 this.dispatch('logoutUser');
 
                 //redirect to login
                 this._requestSignOut();
+            }
+
+            loadUser(loggedIn) {
+                if(loggedIn) {
+                    this._keycloak.loadUserInfo().success(userInfo => {
+                        this.dispatch("receiveUser", userInfo)
+                    }).error(function () {
+                        output('Failed to load user info');
+                    });
+                }
+            }
+
+            loadUserProfile(){
+                this._keycloak.loadUserProfile().success(function(profile) {
+                    console.log(profile);
+                }).error(function() {
+                    console.log('Failed to load profile');
+                });
             }
 
         }

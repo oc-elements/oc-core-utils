@@ -9,6 +9,7 @@
     const LOGIN_USER = 'LOGIN_USER';
     const LOGOUT_USER = 'LOGOUT_USER';
     const CLEAR_TOKEN = 'CLEAR_TOKEN';
+    const RECEIVE_MARKETPLACE = 'RECEIVE_MARKETPLACE';
 
     //organisation
     const RECEIVE_ORGANISATION = 'RECEIVE_ORGANISATION';
@@ -35,24 +36,19 @@
     const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
     (function () {
 
-
         function identity(state = {
                               user: null,
                               loggedIn: false,
-                              token: "",
+                              token: null,
                               didInvalidate: false,
                               isFetching: false,
+                              marketplace: false
                           },
                           action) {
             switch (action.type) {
                 case INVALIDATE_USER:
                     return Object.assign({}, state, {
                         didInvalidate: true
-                    });
-                case REQUEST_USER:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
                     });
                 case LOGOUT_USER:
                     return Object.assign({}, state, {
@@ -63,6 +59,7 @@
                     });
                 case LOGIN_USER:
                     return Object.assign({}, state, {
+                        loggedIn: true,
                         token: action.token,
                         lastUpdated: action.receivedAt
                     });
@@ -72,6 +69,10 @@
                         loggedIn: true,
                         lastUpdated: action.receivedAt,
                         isFetching: false
+                    });
+                case RECEIVE_MARKETPLACE:
+                    return Object.assign({}, state, {
+                        marketplace: action.marketplace
                     });
                 case CLEAR_TOKEN:
                     return Object.assign({}, state, {
@@ -212,26 +213,36 @@
 
         function config(state = {
                             loaded: false,
+                            apiHostUrl: "",
                             clientId: "",
                             tokenRedirectUri: "",
-                            authClientId: "",
-                            authHostUrl: "",
-                            apiHostUrl: "",
-                            environment: ""
+                            environment: "",
+                            realm: "",
+                            authServerUrl: "",
+                            sslRequired: "",
+                            resource: "",
+                            publicClient: true,
+                            confidentialPort: 0,
+                            featureFlags: {}
                         },
                         action) {
             switch (action.type) {
                 case RECEIVE_CONFIG:
                     return Object.assign({}, state, {
                         loaded: true,
+                        apiHostUrl: action.apiHostUrl,
                         clientId: action.clientId,
                         organisationId: action.organisationId,
                         tokenRedirectUri: action.tokenRedirectUri,
-                        authClientId: action.authClientId,
-                        authHostUrl: action.authHostUrl,
-                        apiHostUrl: action.apiHostUrl,
+                        realm: action.realm,
+                        authServerUrl: action.authServerUrl,
+                        sslRequired: action.sslRequired,
+                        resource: action.resource,
+                        publicClient: action.publicClient,
+                        confidentialPort: action.confidentialPort,
                         environment: action.environment,
-                        lastUpdated: action.receivedAt
+                        lastUpdated: action.receivedAt,
+                        featureFlags: action.featureFlags
                     });
                 default:
                     return state
