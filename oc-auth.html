@@ -120,7 +120,6 @@
              *Requests link to signout of the app
              */
             _requestSignOut() {
-                this._save('post-auth-page', window.location.href);
                 window.location = [
                     this._keycloak.createLogoutUrl({redirectUri: this._tokenRedirectUri})
                 ];
