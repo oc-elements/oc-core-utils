@@ -1,3 +1,4 @@
+<script src="../../node_modules/keycloak-js/dist/keycloak.js"></script>
 <link rel="import" href="../iron-ajax/iron-request.html">
 <link rel="import" href="oc-store.html">
 <iron-request id="xhr"></iron-request>
@@ -7,57 +8,111 @@
  * @polymer
  * @mixinFunction
  */
-    Ordercloud = window.Ordercloud || { };
-    Ordercloud.TokenRequestor = Polymer.dedupingMixin((superclass) =>
+    Ordercloud = window.Ordercloud || {};
+    Ordercloud.Auth= Polymer.dedupingMixin((superclass) =>
 
         /*
              * @polymer
-             * @mixinClassRedy
+             * @mixinClass
              */
-        class TokenRequestor extends Ordercloud.ReduxMixin( superclass) {
+        class Auth extends Ordercloud.ReduxMixin(superclass) {
             constructor() {
                 super();
             }
 
             static get properties() {
                 return {
-                    _clientId : {
+                    _authServerUrl: {
                         type: String,
-                        statePath: 'config.clientId'
+                        statePath: 'config.authServerUrl'
                     },
-                    _authHostUrl: {
-                        type: String,
-                        statePath: 'config.authHostUrl'
-                    },
-                    _tokenRedirectUri:{
+                    _tokenRedirectUri: {
                         type: String,
                         statePath: 'config.tokenRedirectUri'
                     },
-                    _authClientId:{
+                    _realm: {
                         type: String,
-                        statePath: 'config.authClientId'
+                        statePath: 'config.realm'
+                    },
+                    _sslRequired: {
+                        type: String,
+                        statePath: 'config.sslRequired'},
+                    _clientId: {
+                        type: String,
+                        statePath: 'config.resource'
+                    },
+                    _publicClient: {
+                        type: Boolean,
+                        statePath: 'config.publicClient'
+                    },
+                    _confidentialPort: {
+                        type: Boolean,
+                        statePath: 'config.confidentialPort'
+                    },
+                    _keycloak: {
+                        type: Object,
                     }
-
                 };
+            }
+
+
+            static get observers() {
+                return[
+                    '_initKeycloak(_authServerUrl, _realm, _clientId)',
+                ]
             }
 
             ready() {
                 super.ready();
+
             }
 
-            /**
-             *Requests a token from the auth serverwith implicit grant type
-             */
-            _requestImplicitGrant() {
-                if (this._clientId && this._authHostUrl && this._tokenRedirectUri && this._authClientId) {
-                    this._save('post-auth-page', window.location.href);
-                    window.location = [
-                        this._authHostUrl, 'oauth/implicit?response_type=token&client_id=', this._authClientId,
-                        '&redirect_uri=', encodeURIComponent(this._tokenRedirectUri)
-                    ].join('');
-                } else {
-                    console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');
+            _initKeycloak(authServerUrl, realm, clientId){
+                if((authServerUrl)&&(realm)&&(clientId)){
+                    let kc = Keycloak({
+                        url: this._authServerUrl,
+                        realm: this._realm,
+                        clientId: this._clientId,
+                        redirectUri: this._tokenRedirectUri,
+                        responseType: "code id_token token"
+                    });
+
+                    // Flow can be changed to 'implicit' or 'hybrid', but then client must enable implicit flow in admin console too
+                    let initOptions = {
+                        responseMode: 'fragment',
+                        flow: 'standard',
+                        onLoad: 'login-required'
+                    };
+
+                    kc.init(initOptions).success((authenticated, token) => {
+                        console.log('Init Success (' + (authenticated ? 'Authenticated' : 'Not Authenticated') + ')');
+                        if(authenticated){
+                            this.dispatch('loginUser', kc.token );
+                        }
+                    }).error(function() {
+                        console.log('Init Error');
+                    });
+
+                    kc.onAuthSuccess = function () {
+                        console.log("Authenticated")
+                    };
+
+                    this._keycloak = kc;
                 }
+            }
+
+
+            /**
+             * Update a token before expiry
+             */
+            _updateToken() {
+                this._keycloak.updateToken().success(function(refreshed) {
+                    if (refreshed) {
+                        console.info('Token was successfully refreshed');
+                    }
+                }).error(function() {
+                    console.error('Could not refresh token');
+                });
             }
 
 
@@ -65,40 +120,10 @@
              *Requests link to signout of the app
              */
             _requestSignOut() {
-                if (this._clientId && this._authHostUrl && this._tokenRedirectUri && this._authClientId) {
-                    this._save('post-auth-page', window.location.href);
-                    window.location = [
-                        this._authHostUrl, 'sign-out?next=',
-                        encodeURIComponent(
-                            'oauth/implicit?response_type=token&client_id=' +
-                            this._authClientId +
-                            '&redirect_uri=' +
-                            this._tokenRedirectUri
-                        )
-                    ].join('');
-                } else {
-                    console.error('Core components not configured. Please initialise oc-config element before attempting authorisation.');
-
-                }
-            }
-
-            /**
-             * Saves the value to localStorage.
-             * If `value` is null or undefined, deletes localStorage.
-             */
-            _save(key, value) {
-                try {
-                    if (value === null || value === undefined) {
-                        window.localStorage.removeItem(key);
-                    } else {
-                        window.localStorage.setItem(key, /** @type {string} */ (value));
-                    }
-                }
-                catch(ex) {
-                    // Happens in Safari incognito mode,
-                    this.errorMessage = ex.message;
-                    Polymer.Base._error("Could not save to localStorage. Incognito mode may be blocking this action", ex);
-                }
+                this._save('post-auth-page', window.location.href);
+                window.location = [
+                    this._keycloak.createLogoutUrl({redirectUri: this._tokenRedirectUri})
+                ];
             }
         }
     )
