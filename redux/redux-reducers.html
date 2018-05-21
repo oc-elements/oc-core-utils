@@ -4,6 +4,7 @@
 
 	//cart
 	const ADD_CART_ITEM = 'ADD_CART_ITEM';
+	const GET_CART = 'GET_CART';
 
 	//users
 	const INVALIDATE_USER = 'INVALIDATE_USER';
@@ -46,6 +47,11 @@
 					  action) {
 			switch (action.type) {
 				case ADD_CART_ITEM:
+					return Object.assign({}, state, {
+						cartItems: action.response.items,
+						count: action.response.items.length
+					});
+				case GET_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
 						count: action.response.items.length

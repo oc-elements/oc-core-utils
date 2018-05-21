@@ -16,15 +16,17 @@
 		}
 
 		/**
-		 * Set the logged in user
+		 * Set the logged in user and then get cart items of user
 		 * @param payload
-		 * @returns {{type, user: *, receivedAt: number}}
 		 */
 		function receiveUser(payload) {
-			return {
-				type: RECEIVE_USER,
-				user: payload,
-				receivedAt: Date.now()
+			return dispatch => {
+				dispatch({
+					type: RECEIVE_USER,
+					user: payload,
+					receivedAt: Date.now()
+				});
+				dispatch(getCart());
 			}
 		}
 
@@ -45,7 +47,7 @@
 		 * @returns {{type}}
 		 */
 		function loginUser(payload) {
-			return dispatch =>{
+			return dispatch => {
 				dispatch({
 					type: LOGIN_USER,
 					token : payload
@@ -412,6 +414,18 @@
 
 		}
 
+		function getCart() {
+			return (dispatch, getState) => {
+				const params = {
+					method: 'GET',
+				};
+				return dispatch({
+					types: ['', 'GET_CART', ''],
+					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+				})
+			}
+		}
+
 		/* Cart Items */
 		function addToCart(payload) {
 			return (dispatch, getState) => {
@@ -511,6 +525,7 @@
 			fetchClientIdIfNeeded,
 			invalidateAccounts,
 			fetchAccountsIfNeeded,
+			getCart,
 			addToCart,
 			receiveBalance,
 			receiveNoOrganisation,
