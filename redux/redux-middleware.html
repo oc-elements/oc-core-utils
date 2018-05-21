@@ -3,70 +3,77 @@
 
 <script>
 
-    var Ordercloud = window.Ordercloud || {};
-    (function() {
+	var Ordercloud = window.Ordercloud || {};
+	(function() {
 
-        const callAPIMiddleware = ({ dispatch, getState }) => {
-            return next => action => {
-                const {
-                    types,
-                    callAPI,
-                    shouldCallAPI = () => true,
-                    payload = {}
-                } = action
+		const callAPIMiddleware = ({ dispatch, getState }) => {
+			return next => action => {
+				const {
+					types,
+					callAPI,
+					shouldCallAPI = () => true,
+					payload = {}
+				} = action
 
-                if (!types) {
-                    // Normal action: pass it on
-                    return next(action)
-                }
+				if (!types) {
+					// Normal action: pass it on
+					return next(action)
+				}
 
-                if (
-                    !Array.isArray(types) ||
-                    types.length !== 3 ||
-                    !types.every(type => typeof type === 'string')
-                ) {
-                    throw new Error('Expected an array of three string types.')
-                }
+				if (
+					!Array.isArray(types) ||
+					types.length !== 3 ||
+					!types.every(type => typeof type === 'string')
+				) {
+					throw new Error('Expected an array of three string types.')
+				}
 
-                if (typeof callAPI !== 'function') {
-                    throw new Error('Expected callAPI to be a function.')
-                }
+				if (typeof callAPI !== 'function') {
+					throw new Error('Expected callAPI to be a function.')
+				}
 
-                if (!shouldCallAPI(getState())) {
-                    return
-                }
+				if (!shouldCallAPI(getState())) {
+					return
+				}
 
-                const [requestType, successType, failureType] = types
+				const [requestType, successType, failureType] = types
 
-                dispatch(
-                    Object.assign({}, payload, {
-                        type: requestType
-                    })
-                );
+				dispatch(
+					Object.assign({}, payload, {
+						type: requestType
+					})
+				);
 
-                return callAPI().then(
-                    response =>
-                        dispatch(
-                            Object.assign({}, payload, {
-                                response,
-                                type: successType
-                            })
-                        ),
-                    error =>
-                        dispatch(
-                            Object.assign({}, payload, {
-                                error,
-                                type: failureType
-                            })
-                        )
-                )
-            }
-        }
+				return callAPI()
+					.then((response) => { return response.json(); })
+					.then((responseBody) => {
+						if (responseBody.code && responseBody.code !== 200)
+							throw new Error(responseBody.message);
+						return responseBody;
+					})
+					.then(response => {
+						return dispatch(
+							Object.assign({}, payload, {
+								response,
+								type: successType,
+							})
+						);
+					})
+					.catch(error => {
+						return dispatch(
+							Object.assign({}, payload, {
+								error: error.message,
+								type: failureType,
+							})
+						)
+					})
+			}
+		}
 
 
-        Ordercloud.middleware = [
-            ReduxThunk.default,
-            callAPIMiddleware,
-        ]
-    }());
+		Ordercloud.middleware = [
+			ReduxThunk.default,
+			callAPIMiddleware,
+		]
+	}());
 </script>

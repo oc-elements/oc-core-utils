@@ -39,71 +39,69 @@
 	const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 	(function () {
 
-        function cart(state = {
-                          cartItems: [],
-                          count: 0
-                      },
-                      action) {
-            switch (action.type) {
-                case ADD_CART_ITEM:
-                    const items = state.cartItems;
-                    items.push(action.cartItem);
-                    return Object.assign({}, state, {
-                        cartItems: items,
-                        count: items.length
-                    });
-                default:
-                    return state
-            }
-        }
+		function cart(state = {
+						  cartItems: [],
+						  count: 0
+					  },
+					  action) {
+			switch (action.type) {
+				case ADD_CART_ITEM:
+					return Object.assign({}, state, {
+						cartItems: action.response.items,
+						count: action.response.items.length
+					});
+				default:
+					return state
+			}
+		}
 
-        function identity(state = {
-                              user: null,
-                              loggedIn: false,
-                              token: null,
-                              didInvalidate: false,
-                              isFetching: false,
-                              marketplace: false
-                          },
-                          action) {
-            switch (action.type) {
-                case INVALIDATE_USER:
-                    return Object.assign({}, state, {
-                        didInvalidate: true
-                    });
-                case LOGOUT_USER:
-                    return Object.assign({}, state, {
-                        loggedIn: false,
-                        user: [],
-                        token: "",
-                        didInvalidate: true
-                    });
-                case LOGIN_USER:
-                    return Object.assign({}, state, {
-                        loggedIn: true,
-                        token: action.token,
-                        lastUpdated: action.receivedAt
-                    });
-                case RECEIVE_USER:
-                    return Object.assign({}, state, {
-                        user: action.user,
-                        loggedIn: true,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false
-                    });
-                case RECEIVE_MARKETPLACE:
-                    return Object.assign({}, state, {
-                        marketplace: action.marketplace
-                    });
-                case CLEAR_TOKEN:
-                    return Object.assign({}, state, {
-                        token: "",
-                        lastUpdated: action.receivedAt
-                    });
-                default:
-                    return state
-            }
-        }
+		function identity(state = {
+							  user: null,
+							  loggedIn: false,
+							  token: null,
+							  didInvalidate: false,
+							  isFetching: false,
+							  marketplace: false
+						  },
+						  action) {
+			switch (action.type) {
+				case INVALIDATE_USER:
+					return Object.assign({}, state, {
+						didInvalidate: true
+					});
+				case LOGOUT_USER:
+					return Object.assign({}, state, {
+						loggedIn: false,
+						user: [],
+						token: "",
+						didInvalidate: true
+					});
+				case LOGIN_USER:
+					return Object.assign({}, state, {
+						loggedIn: true,
+						token: action.token,
+						lastUpdated: action.receivedAt
+					});
+				case RECEIVE_USER:
+					return Object.assign({}, state, {
+						user: action.user,
+						loggedIn: true,
+						lastUpdated: action.receivedAt,
+						isFetching: false
+					});
+				case RECEIVE_MARKETPLACE:
+					return Object.assign({}, state, {
+						marketplace: action.marketplace
+					});
+				case CLEAR_TOKEN:
+					return Object.assign({}, state, {
+						token: "",
+						lastUpdated: action.receivedAt
+					});
+				default:
+					return state
+			}
+		}
 
 		function organisation(state = {
 								  profile: null,
@@ -232,43 +230,43 @@
 			}
 		}
 
-        function config(state = {
-                            loaded: false,
-                            apiHostUrl: "",
-                            clientId: "",
-                            tokenRedirectUri: "",
-                            environment: "",
-                            realm: "",
-                            authServerUrl: "",
-                            sslRequired: "",
-                            resource: "",
-                            publicClient: true,
-                            confidentialPort: 0,
-                            featureFlags: {}
-                        },
-                        action) {
-            switch (action.type) {
-                case RECEIVE_CONFIG:
-                    return Object.assign({}, state, {
-                        loaded: true,
-                        apiHostUrl: action.apiHostUrl,
-                        clientId: action.clientId,
-                        organisationId: action.organisationId,
-                        tokenRedirectUri: action.tokenRedirectUri,
-                        realm: action.realm,
-                        authServerUrl: action.authServerUrl,
-                        sslRequired: action.sslRequired,
-                        resource: action.resource,
-                        publicClient: action.publicClient,
-                        confidentialPort: action.confidentialPort,
-                        environment: action.environment,
-                        lastUpdated: action.receivedAt,
-                        featureFlags: action.featureFlags
-                    });
-                default:
-                    return state
-            }
-        }
+		function config(state = {
+							loaded: false,
+							apiHostUrl: "",
+							clientId: "",
+							tokenRedirectUri: "",
+							environment: "",
+							realm: "",
+							authServerUrl: "",
+							sslRequired: "",
+							resource: "",
+							publicClient: true,
+							confidentialPort: 0,
+							featureFlags: {}
+						},
+						action) {
+			switch (action.type) {
+				case RECEIVE_CONFIG:
+					return Object.assign({}, state, {
+						loaded: true,
+						apiHostUrl: action.apiHostUrl,
+						clientId: action.clientId,
+						organisationId: action.organisationId,
+						tokenRedirectUri: action.tokenRedirectUri,
+						realm: action.realm,
+						authServerUrl: action.authServerUrl,
+						sslRequired: action.sslRequired,
+						resource: action.resource,
+						publicClient: action.publicClient,
+						confidentialPort: action.confidentialPort,
+						environment: action.environment,
+						lastUpdated: action.receivedAt,
+						featureFlags: action.featureFlags
+					});
+				default:
+					return state
+			}
+		}
 
 		var Ordercloud = window.Ordercloud || {};
 		Ordercloud.rootReducer = Redux.combineReducers({
