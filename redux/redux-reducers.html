@@ -2,39 +2,60 @@
 
 <script>
 
-    //users
-    const INVALIDATE_USER = 'INVALIDATE_USER';
-    const REQUEST_USER = 'REQUEST_USER';
-    const RECEIVE_USER = 'RECEIVE_USER';
-    const LOGIN_USER = 'LOGIN_USER';
-    const LOGOUT_USER = 'LOGOUT_USER';
-    const CLEAR_TOKEN = 'CLEAR_TOKEN';
-    const RECEIVE_MARKETPLACE = 'RECEIVE_MARKETPLACE';
+	//cart
+	const ADD_CART_ITEM = 'ADD_CART_ITEM';
 
-    //organisation
-    const RECEIVE_ORGANISATION = 'RECEIVE_ORGANISATION';
-    const RECEIVE_CLIENT_ID = 'RECEIVE_CLIENT_ID';
-    const REQUEST_CLIENT_ID = 'REQUEST_CLIENT_ID';
-    const CLEAR_ORGANISATION = 'CLEAR_ORGANISATION';
-    const REQUEST_ORGANISATION = 'REQUEST_ORGANISATION';
-    const INVALIDATE_ORGANISATION = 'INVALIDATE_ORGANISATION';
-    const RECEIVE_NO_ORGANISATION = 'RECEIVE_NO_ORGANISATION';
+	//users
+	const INVALIDATE_USER = 'INVALIDATE_USER';
+	const REQUEST_USER = 'REQUEST_USER';
+	const RECEIVE_USER = 'RECEIVE_USER';
+	const LOGIN_USER = 'LOGIN_USER';
+	const LOGOUT_USER = 'LOGOUT_USER';
+	const CLEAR_TOKEN = 'CLEAR_TOKEN';
+	const RECEIVE_MARKETPLACE = 'RECEIVE_MARKETPLACE';
 
-    //accounts
-    const INVALIDATE_ACCOUNTS = 'INVALIDATE_ACCOUNTS';
-    const REQUEST_ACCOUNTS = 'REQUEST_ACCOUNTS';
-    const RECEIVE_ACCOUNTS = 'RECEIVE_ACCOUNTS';
-    const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
-    const RECEIVE_BALANCE = 'RECEIVE_BALANCE';
-    const RECEIVE_DEFAULT = 'RECEIVE_DEFAULT';
-    const REQUEST_DEPOSIT_ACCOUNTS = 'REQUEST_DEPOSIT_ACCOUNTS';
-    const RECEIVE_DEPOSIT_ACCOUNTS = 'RECEIVE_DEPOSIT_ACCOUNTS';
-    const REQUEST_WITHDRAW_ACCOUNTS = 'REQUEST_WITHDRAW_ACCOUNTS';
-    const RECEIVE_WITHDRAW_ACCOUNTS = 'RECEIVE_WITHDRAW_ACCOUNTS';
+	//organisation
+	const RECEIVE_ORGANISATION = 'RECEIVE_ORGANISATION';
+	const RECEIVE_CLIENT_ID = 'RECEIVE_CLIENT_ID';
+	const REQUEST_CLIENT_ID = 'REQUEST_CLIENT_ID';
+	const CLEAR_ORGANISATION = 'CLEAR_ORGANISATION';
+	const REQUEST_ORGANISATION = 'REQUEST_ORGANISATION';
+	const INVALIDATE_ORGANISATION = 'INVALIDATE_ORGANISATION';
+	const RECEIVE_NO_ORGANISATION = 'RECEIVE_NO_ORGANISATION';
 
-    //config
-    const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
-    (function () {
+	//accounts
+	const INVALIDATE_ACCOUNTS = 'INVALIDATE_ACCOUNTS';
+	const REQUEST_ACCOUNTS = 'REQUEST_ACCOUNTS';
+	const RECEIVE_ACCOUNTS = 'RECEIVE_ACCOUNTS';
+	const CLEAR_ACCOUNTS = 'CLEAR_ACCOUNTS';
+	const RECEIVE_BALANCE = 'RECEIVE_BALANCE';
+	const RECEIVE_DEFAULT = 'RECEIVE_DEFAULT';
+	const REQUEST_DEPOSIT_ACCOUNTS = 'REQUEST_DEPOSIT_ACCOUNTS';
+	const RECEIVE_DEPOSIT_ACCOUNTS = 'RECEIVE_DEPOSIT_ACCOUNTS';
+	const REQUEST_WITHDRAW_ACCOUNTS = 'REQUEST_WITHDRAW_ACCOUNTS';
+	const RECEIVE_WITHDRAW_ACCOUNTS = 'RECEIVE_WITHDRAW_ACCOUNTS';
+
+	//config
+	const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
+	(function () {
+
+        function cart(state = {
+                          cartItems: [],
+                          count: 0
+                      },
+                      action) {
+            switch (action.type) {
+                case ADD_CART_ITEM:
+                    const items = state.cartItems;
+                    items.push(action.cartItem);
+                    return Object.assign({}, state, {
+                        cartItems: items,
+                        count: items.length
+                    });
+                default:
+                    return state
+            }
+        }
 
         function identity(state = {
                               user: null,
@@ -84,132 +105,132 @@
             }
         }
 
-        function organisation(state = {
-                                  profile: null,
-                                  clientId: null,
-                                  id: null,
-                                  default: 0,
-                                  didInvalidate: false,
-                                  isFetching: false,
-                                  hasOrganisation: true
-                              },
-                              action) {
-            switch (action.type) {
+		function organisation(state = {
+								  profile: null,
+								  clientId: null,
+								  id: null,
+								  default: 0,
+								  didInvalidate: false,
+								  isFetching: false,
+								  hasOrganisation: true
+							  },
+							  action) {
+			switch (action.type) {
 
-                case INVALIDATE_ORGANISATION:
-                    return Object.assign({}, state, {
-                        didInvalidate: true
-                    });
-                case REQUEST_ORGANISATION:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
-                    });
-                case RECEIVE_ORGANISATION:
-                    return Object.assign({}, state, {
-                        id: action.id,
-                        profile: action.profile,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false,
-                        hasOrganisation: true
-                    });
-                case RECEIVE_NO_ORGANISATION:
-                    return Object.assign({}, state, {
-                        hasOrganisation: false,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false
-                    });
-                case CLEAR_ORGANISATION:
-                    return Object.assign({}, state, {
-                        id: null,
-                        profile: [],
-                        clientId: "",
-                        hasOrganisation: false
-                    });
-                case RECEIVE_CLIENT_ID:
-                    return Object.assign({}, state, {
-                        clientId: action.clientId,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false,
-                        hasOrganisation: true
-                    });
-                default:
-                    return state
-            }
-        }
+				case INVALIDATE_ORGANISATION:
+					return Object.assign({}, state, {
+						didInvalidate: true
+					});
+				case REQUEST_ORGANISATION:
+					return Object.assign({}, state, {
+						isFetching: true,
+						didInvalidate: false
+					});
+				case RECEIVE_ORGANISATION:
+					return Object.assign({}, state, {
+						id: action.id,
+						profile: action.profile,
+						lastUpdated: action.receivedAt,
+						isFetching: false,
+						hasOrganisation: true
+					});
+				case RECEIVE_NO_ORGANISATION:
+					return Object.assign({}, state, {
+						hasOrganisation: false,
+						lastUpdated: action.receivedAt,
+						isFetching: false
+					});
+				case CLEAR_ORGANISATION:
+					return Object.assign({}, state, {
+						id: null,
+						profile: [],
+						clientId: "",
+						hasOrganisation: false
+					});
+				case RECEIVE_CLIENT_ID:
+					return Object.assign({}, state, {
+						clientId: action.clientId,
+						lastUpdated: action.receivedAt,
+						isFetching: false,
+						hasOrganisation: true
+					});
+				default:
+					return state
+			}
+		}
 
-        function accounts(state = {
-                              available: null,
-                              withdraw: null,
-                              deposit: null,
-                              default: 0,
-                              balance: null,
-                              didInvalidate: false,
-                              isFetching: false,
-                              lastUpdated: null
-                          },
-                          action) {
-            switch (action.type) {
-                case INVALIDATE_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        didInvalidate: true
-                    });
-                case REQUEST_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
-                    });
-                case RECEIVE_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        available: action.accounts,
-                        lastUpdated: action.receivedAt
-                    });
-                case REQUEST_DEPOSIT_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
-                    });
-                case RECEIVE_DEPOSIT_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        deposit: action.deposit,
-                        lastUpdated: action.receivedAt,
+		function accounts(state = {
+							  available: null,
+							  withdraw: null,
+							  deposit: null,
+							  default: 0,
+							  balance: null,
+							  didInvalidate: false,
+							  isFetching: false,
+							  lastUpdated: null
+						  },
+						  action) {
+			switch (action.type) {
+				case INVALIDATE_ACCOUNTS:
+					return Object.assign({}, state, {
+						didInvalidate: true
+					});
+				case REQUEST_ACCOUNTS:
+					return Object.assign({}, state, {
+						isFetching: true,
+						didInvalidate: false
+					});
+				case RECEIVE_ACCOUNTS:
+					return Object.assign({}, state, {
+						available: action.accounts,
+						lastUpdated: action.receivedAt
+					});
+				case REQUEST_DEPOSIT_ACCOUNTS:
+					return Object.assign({}, state, {
+						isFetching: true,
+						didInvalidate: false
+					});
+				case RECEIVE_DEPOSIT_ACCOUNTS:
+					return Object.assign({}, state, {
+						deposit: action.deposit,
+						lastUpdated: action.receivedAt,
 
-                    });
-                case REQUEST_WITHDRAW_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        isFetching: true,
-                        didInvalidate: false
-                    });
-                case RECEIVE_WITHDRAW_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        withdraw: action.withdraw,
-                        lastUpdated: action.receivedAt,
+					});
+				case REQUEST_WITHDRAW_ACCOUNTS:
+					return Object.assign({}, state, {
+						isFetching: true,
+						didInvalidate: false
+					});
+				case RECEIVE_WITHDRAW_ACCOUNTS:
+					return Object.assign({}, state, {
+						withdraw: action.withdraw,
+						lastUpdated: action.receivedAt,
 
-                    });
-                case RECEIVE_BALANCE:
-                    return Object.assign({}, state, {
-                        balance: action.balance,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false
-                    });
-                case RECEIVE_DEFAULT:
-                    return Object.assign({}, state, {
-                        default: action.default,
-                        lastUpdated: action.receivedAt,
-                        isFetching: false
+					});
+				case RECEIVE_BALANCE:
+					return Object.assign({}, state, {
+						balance: action.balance,
+						lastUpdated: action.receivedAt,
+						isFetching: false
+					});
+				case RECEIVE_DEFAULT:
+					return Object.assign({}, state, {
+						default: action.default,
+						lastUpdated: action.receivedAt,
+						isFetching: false
 
-                    });
-                case CLEAR_ACCOUNTS:
-                    return Object.assign({}, state, {
-                        available: null,
-                        default: null,
-                        lastUpdated: null,
-                        balance: null
-                    });
-                default:
-                    return state
-            }
-        }
+					});
+				case CLEAR_ACCOUNTS:
+					return Object.assign({}, state, {
+						available: null,
+						default: null,
+						lastUpdated: null,
+						balance: null
+					});
+				default:
+					return state
+			}
+		}
 
         function config(state = {
                             loaded: false,
@@ -249,13 +270,14 @@
             }
         }
 
-        var Ordercloud = window.Ordercloud || {};
-        Ordercloud.rootReducer = Redux.combineReducers({
-            identity,
-            organisation,
-            accounts,
-            config
-        })
+		var Ordercloud = window.Ordercloud || {};
+		Ordercloud.rootReducer = Redux.combineReducers({
+			cart,
+			identity,
+			organisation,
+			accounts,
+			config
+		})
 
-    }());
+	}());
 </script>
