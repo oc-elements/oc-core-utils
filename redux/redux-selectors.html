@@ -1,51 +1,69 @@
 <script src="../../../node_modules/reselect/dist/reselect.js"></script>
 
 <script>
-    var Ordercloud = window.Ordercloud || {};
-    (function () {
+	var Ordercloud = window.Ordercloud || {};
+	(function () {
 
-        const organisation = (state) => state.organisation.clientId;
-        const config = (state) => state.config.clientId;
-        const accounts = (state) => state.accounts;
+		const organisation = (state) => state.organisation.clientId;
+		const config = (state) => state.config.clientId;
+		const accounts = (state) => state.accounts;
+		const cart = (state) => state.cart;
 
-        /**
-         * returns the clientId of the organisation if set
-         * else return the clientID from the config
-         */
-        const clientId = Reselect.createSelector(
-            [organisation, config],
-            (org_clientId, clientId) => {
-                return ((org_clientId) ? org_clientId : clientId)
-            }
-        );
+		/**
+		 * returns the clientId of the organisation if set
+		 * else return the clientID from the config
+		 */
+		const clientId = Reselect.createSelector(
+			[organisation, config],
+			(org_clientId, clientId) => {
+				return ((org_clientId) ? org_clientId : clientId)
+			}
+		);
 
-        /**
-         * returns the balance of the ShopToShop account
-         */
-        const balance = Reselect.createSelector(
-            [accounts],
-            (accounts) => {
-                return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
-            }
-        );
-
-
-        /**
-         * returns the defaultAccount which is the ShopToShop account
-         */
-        const defaultAccount = Reselect.createSelector(
-            [accounts],
-            (accounts) => {
-                return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
-            }
-        );
+		/**
+		 * returns the balance of the ShopToShop account
+		 */
+		const balance = Reselect.createSelector(
+			[accounts],
+			(accounts) => {
+				return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
+			}
+		);
 
 
-        Ordercloud.select = {
-            clientId,
-            balance,
-            defaultAccount
-        }
+		/**
+		 * returns the defaultAccount which is the ShopToShop account
+		 */
+		const defaultAccount = Reselect.createSelector(
+			[accounts],
+			(accounts) => {
+				return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
+			}
+		);
 
-    }());
+		/* Calculate the total per unit and total quantity */
+		const cartItems = Reselect.createSelector(
+			[cart],
+			(cartData) => {
+				let totalCount = 0;
+				for (let i = 0; i < cartData.cartItems.length; i++) {
+					const product = cartData.cartItems[i];
+					product.total = product.quantity * product.detail.price;
+					totalCount += product.quantity;
+				}
+				cartData.totalCount = totalCount;
+
+				return cartData;
+			}
+		);
+
+
+		Ordercloud.select = {
+			clientId,
+			balance,
+			defaultAccount,
+			cartItems
+		}
+
+	}());
 </script>

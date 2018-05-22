@@ -3,6 +3,7 @@
 <script>
 
 	//cart
+	const REMOVE_CART_ITEM = 'REMOVE_CART_ITEM';
 	const ADD_CART_ITEM = 'ADD_CART_ITEM';
 	const GET_CART = 'GET_CART';
 
@@ -42,19 +43,28 @@
 
 		function cart(state = {
 						  cartItems: [],
-						  count: 0
+						  count: 0,
+						  total: 0,
 					  },
 					  action) {
 			switch (action.type) {
+				case REMOVE_CART_ITEM:
+					return Object.assign({}, state, {
+						cartItems: action.response.items,
+						count: action.response.items.length,
+						total: action.response.cartTotal
+					});
 				case ADD_CART_ITEM:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length
+						count: action.response.items.length,
+						total: action.response.cartTotal
 					});
 				case GET_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length
+						count: action.response.items.length,
+						total: action.response.cartTotal
 					});
 				default:
 					return state
