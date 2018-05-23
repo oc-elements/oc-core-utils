@@ -16,15 +16,17 @@
 		}
 
 		/**
-		 * Set the logged in user
+		 * Set the logged in user and then get cart items of user
 		 * @param payload
-		 * @returns {{type, user: *, receivedAt: number}}
 		 */
 		function receiveUser(payload) {
-			return {
-				type: RECEIVE_USER,
-				user: payload,
-				receivedAt: Date.now()
+			return dispatch => {
+				dispatch({
+					type: RECEIVE_USER,
+					user: payload,
+					receivedAt: Date.now()
+				});
+				dispatch(getCart());
 			}
 		}
 
@@ -40,19 +42,19 @@
 			}
 		}
 
-        /**
-         * Set the logged in user
-         * @returns {{type}}
-         */
-        function loginUser(payload) {
-            return dispatch =>{
-                dispatch({
-                    type: LOGIN_USER,
-                    token : payload
-                });
-                return Promise.resolve();
-            }
-        }
+		/**
+		 * Set the logged in user
+		 * @returns {{type}}
+		 */
+		function loginUser(payload) {
+			return dispatch => {
+				dispatch({
+					type: LOGIN_USER,
+					token : payload
+				});
+				return Promise.resolve();
+			}
+		}
 
 		/**
 		 * Set the logged in user
@@ -412,12 +414,49 @@
 
 		}
 
+		function getCart() {
+			return (dispatch, getState) => {
+				const params = {
+					method: 'GET',
+				};
+				return dispatch({
+					types: ['', 'GET_CART', ''],
+					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+				})
+			}
+		}
+
+		function removeCartItem(payload) {
+			return (dispatch, getState) => {
+				const params = {
+					method: 'DELETE',
+				};
+
+				return dispatch({
+					types: ['', 'REMOVE_CART_ITEM', ''],
+					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub + '/item/' + payload.itemHash, getState()), params)
+				})
+			}
+		}
+
 		/* Cart Items */
 		function addToCart(payload) {
-			return {
-				type: ADD_CART_ITEM,
-				cartItem: payload,
-				receivedAt: Date.now()
+			return (dispatch, getState) => {
+				const body = {
+					productId: payload.item.id,
+					optionIds: [],
+					extraIds: [],
+					quantity: payload.quantity
+				};
+				const params = {
+					method: 'PUT',
+					body: JSON.stringify(body),
+				};
+
+				return dispatch({
+					types: ['', 'ADD_CART_ITEM', ''],
+					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+				})
 			}
 		}
 
@@ -444,6 +483,7 @@
 
 			myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
 			myHeaders.append('X-Ordercloud-Organisation', client);
+			myHeaders.append('Content-Type', "application/json");
 
 			var myInit = {
 				method: 'GET',
@@ -456,53 +496,55 @@
 
 		}
 
-        /**
-         *
-         * @param payload
-         * @returns {{type, clientId: *, receivedAt: number}}
-         */
-        function receiveConfig(payload) {
-            return dispatch => {
-                dispatch({
-                    type: RECEIVE_CONFIG,
-                    apiHostUrl: payload.apiHostUrl,
-                    clientId: payload.clientId,
-                    organisationId: payload.organisationId,
-                    tokenRedirectUri: payload.tokenRedirectUri,
-                    realm: payload.realm,
-                    authServerUrl: payload.authServerUrl,
-                    sslRequired: payload.sslRequired,
-                    resource: payload.resource,
-                    publicClient: payload.publicClient,
-                    confidentialPort: payload.confidentialPort,
-                    environment: payload.environment,
-                    featureFlags: payload.featureFlags,
-                    receivedAt: Date.now()
-                });
+		/**
+		 *
+		 * @param payload
+		 * @returns {{type, clientId: *, receivedAt: number}}
+		 */
+		function receiveConfig(payload) {
+			return dispatch => {
+				dispatch({
+					type: RECEIVE_CONFIG,
+					apiHostUrl: payload.apiHostUrl,
+					clientId: payload.clientId,
+					organisationId: payload.organisationId,
+					tokenRedirectUri: payload.tokenRedirectUri,
+					realm: payload.realm,
+					authServerUrl: payload.authServerUrl,
+					sslRequired: payload.sslRequired,
+					resource: payload.resource,
+					publicClient: payload.publicClient,
+					confidentialPort: payload.confidentialPort,
+					environment: payload.environment,
+					featureFlags: payload.featureFlags,
+					receivedAt: Date.now()
+				});
 
 				return Promise.resolve();
 			}
 		}
 
-        Ordercloud.actions = {
-            receiveUser,
-            loginUser,
-            logoutUser,
-            clearToken,
-            invalidateUser,
-            receiveOrganisation,
-            clearOrganisation,
-            receiveClientId,
-            receiveConfig,
-            fetchOrganisationIfNeeded,
-            fetchClientIdIfNeeded,
-            invalidateAccounts,
-            fetchAccountsIfNeeded,
-            addToCart,
-            receiveBalance,
-            receiveNoOrganisation,
-            receiveMarketplace
-        }
+		Ordercloud.actions = {
+			receiveUser,
+			loginUser,
+			logoutUser,
+			clearToken,
+			invalidateUser,
+			receiveOrganisation,
+			clearOrganisation,
+			receiveClientId,
+			receiveConfig,
+			fetchOrganisationIfNeeded,
+			fetchClientIdIfNeeded,
+			invalidateAccounts,
+			fetchAccountsIfNeeded,
+			getCart,
+			removeCartItem,
+			addToCart,
+			receiveBalance,
+			receiveNoOrganisation,
+			receiveMarketplace
+		}
 
 	}());
 </script>
