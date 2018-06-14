@@ -7,14 +7,14 @@
  * @polymer
  * @mixinFunction
  */
-    Ordercloud = window.Ordercloud || { };
+    Ordercloud = window.Ordercloud || {};
     Ordercloud.ApiMixin = Polymer.dedupingMixin((superclass) =>
 
         /*
              * @polymer
              * @mixinClass
              */
-        class OCApi extends Ordercloud.ReduxMixin(superclass ){
+        class OCApi extends Ordercloud.ReduxMixin(superclass) {
             constructor() {
                 super();
             }
@@ -62,6 +62,7 @@
                             {"key": 506, "text": "Variant Also Negotiates"}
                         ]
                     }
+
                 };
             }
 
@@ -70,10 +71,6 @@
                 super.connectedCallback();
             }
 
-            // Element class can define custom element reactions
-            connectedCallback() {
-                super.connectedCallback();
-            }
 
             ready() {
                 super.ready();
@@ -88,28 +85,29 @@
                 return this.getState().config.apiHostUrl + 'resource/' + uri;
             }
 
-            _normalizeError (request) {
+            _getToken() {
+                return this.getState().identity.token;
+            }
+
+            _normalizeError(request) {
                 if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
-                    throw new ExpiredTokenError();
+                    throw new ExpiredTokenError("Token is expired! Please log in again.");
                 }
                 if (request.xhr.response && 'message' in request.xhr.response) {
                     const error = new Error();
                     throw error.messageData = request.xhr.response
                 }
-
                 throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
             }
 
-
-            _generateRequest (request, marketplace =false) {
-
+            _generateRequest(request, marketplace = false) {
                 //check if the call is a marketplace connection
-                let clientId =  this.getState().config.clientId;
-                if(!marketplace){
+                let clientId = this.getState().config.clientId;
+                if (!marketplace) {
                     clientId = Ordercloud.select.clientId(this.getState());
                 }
 
-                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this.getState().identity.token;
+                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this._getToken();
                 request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
                 let ironRequest = request.generateRequest();
                 request.headers = {};
@@ -120,7 +118,9 @@
         }
     );
 
-    function ExpiredTokenError() {}
+    function ExpiredTokenError() {
+    }
+
     ExpiredTokenError.prototype = Object.create(Error.prototype);
 
 </script>

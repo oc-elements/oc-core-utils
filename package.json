@@ -10,7 +10,8 @@
     "bower-npm-resolver": "^0.8.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "keycloak-js" : "^3.4.3"
   },
   "devDependencies": {},
   "scripts": {

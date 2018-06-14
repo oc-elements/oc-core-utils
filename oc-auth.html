@@ -1,0 +1,142 @@
+<script src="../../node_modules/keycloak-js/dist/keycloak.js"></script>
+<link rel="import" href="../iron-ajax/iron-request.html">
+<link rel="import" href="oc-store.html">
+<iron-request id="xhr"></iron-request>
+<script>
+    /*
+ * Ordercloud API Mixin that allows requesting of tokens.
+ * @polymer
+ * @mixinFunction
+ */
+    Ordercloud = window.Ordercloud || {};
+    Ordercloud.Auth = Polymer.dedupingMixin((superclass) => {
+
+            /*
+                     * @polymer
+                     * @mixinClass
+                     */
+            return class Auth extends Ordercloud.ReduxMixin(superclass) {
+                constructor() {
+                    super();
+                }
+
+                static get properties() {
+                    return {
+                        _authServerUrl: {
+                            type: String,
+                            statePath: 'config.authServerUrl'
+                        },
+                        _tokenRedirectUri: {
+                            type: String,
+                            statePath: 'config.tokenRedirectUri'
+                        },
+                        _realm: {
+                            type: String,
+                            statePath: 'config.realm'
+                        },
+                        _sslRequired: {
+                            type: String,
+                            statePath: 'config.sslRequired'
+                        },
+                        _clientId: {
+                            type: String,
+                            statePath: 'config.resource'
+                        },
+                        _publicClient: {
+                            type: Boolean,
+                            statePath: 'config.publicClient'
+                        },
+                        _confidentialPort: {
+                            type: Boolean,
+                            statePath: 'config.confidentialPort'
+                        },
+                        _keycloak: {
+                            type: Object,
+                        }
+                    };
+                }
+
+
+                static get observers() {
+                    return [
+                        '_initKeycloak(_authServerUrl, _realm, _clientId)',
+                    ]
+                }
+
+                ready() {
+                    super.ready();
+
+                }
+
+                _initKeycloak(authServerUrl, realm, clientId) {
+                    if ((authServerUrl) && (realm) && (clientId)) {
+                        let kc = Keycloak({
+                            url: this._authServerUrl,
+                            realm: this._realm,
+                            clientId: this._clientId,
+                            redirectUri: this._tokenRedirectUri,
+                            responseType: "code id_token token"
+                        });
+
+                        // Flow can be changed to 'implicit' or 'hybrid', but then client must enable implicit flow in admin console too
+                        let initOptions = {
+                            responseMode: 'fragment',
+                            flow: 'standard',
+                            onLoad: 'login-required'
+                        };
+
+                        kc.init(initOptions).success((authenticated) => {
+                            console.log('Init Success (' + (authenticated ? 'Authenticated' : 'Not Authenticated') + ')');
+                            if (authenticated) {
+                                this.dispatch('loginUser', {token: kc.token});
+                                //check every 10 seconds if the token has less than 10 seconds left
+                                setInterval(() => {
+                                    kc.updateToken(30).success((refreshed) => {
+                                        if (refreshed) {
+                                            this.dispatch('loginUser', {token: kc.token});
+                                        }
+                                    }).error(() => kc.logout());
+
+                                }, 10000);
+                            } else {
+                                kc.login();
+                            }
+                        }).error(function () {
+                            console.log('Init Error');
+                        });
+
+                        kc.onAuthSuccess = function () {
+                            console.log("Authenticated")
+                        };
+
+                        this._keycloak = kc;
+                    }
+                }
+
+
+                /**
+                 * Update a token before expiry
+                 */
+                _updateToken() {
+                    this._keycloak.updateToken().success(function (refreshed) {
+                        if (refreshed) {
+                            console.info('Token was successfully refreshed');
+                        }
+                    }).error(function () {
+                        console.error('Could not refresh token');
+                    });
+                }
+
+
+                /**
+                 *Requests link to signout of the app
+                 */
+                _requestSignOut() {
+                    window.location = [
+                        this._keycloak.createLogoutUrl({redirectUri: this._tokenRedirectUri})
+                    ];
+                }
+            };
+        }
+    )
+</script>
