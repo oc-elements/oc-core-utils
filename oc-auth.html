@@ -74,16 +74,19 @@
                             url: this._authServerUrl,
                             realm: this._realm,
                             clientId: this._clientId,
-                            redirectUri: this._tokenRedirectUri,
                             responseType: "code id_token token"
                         });
 
                         // Flow can be changed to 'implicit' or 'hybrid', but then client must enable implicit flow in admin console too
                         let initOptions = {
                             responseMode: 'fragment',
-                            flow: 'standard',
-                            onLoad: 'login-required'
+                            flow: 'standard'
                         };
+
+                        let loginOptions = {
+                            redirectUri: this._tokenRedirectUri,
+                        };
+
 
                         kc.init(initOptions).success((authenticated) => {
                             console.log('Init Success (' + (authenticated ? 'Authenticated' : 'Not Authenticated') + ')');
@@ -99,7 +102,7 @@
 
                                 }, 10000);
                             } else {
-                                kc.login();
+                                kc.login(loginOptions);
                             }
                         }).error(function () {
                             console.log('Init Error');
