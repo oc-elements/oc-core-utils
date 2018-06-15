@@ -100,7 +100,7 @@
                     this._keycloak.loadUserInfo().success(userInfo => {
                         this.dispatch("receiveUser", userInfo)
                     }).error(function () {
-                        output('Failed to load user info');
+                        console.error('Failed to load profile');
                     });
                 }
             }

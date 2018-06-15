@@ -62,6 +62,7 @@
                             {"key": 506, "text": "Variant Also Negotiates"}
                         ]
                     }
+
                 };
             }
 
@@ -90,7 +91,7 @@
 
             _normalizeError(request) {
                 if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
-                    throw new ExpiredTokenError();
+                    throw new ExpiredTokenError("Token is expired! Please log in again.");
                 }
                 if (request.xhr.response && 'message' in request.xhr.response) {
                     const error = new Error();
