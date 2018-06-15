@@ -45,6 +45,8 @@
 		const cartItems = Reselect.createSelector(
 			[cart],
 			(cartData) => {
+				if (!cartData.cartItems) return cartData;
+
 				let totalCount = 0;
 				for (let i = 0; i < cartData.cartItems.length; i++) {
 					const product = cartData.cartItems[i];
