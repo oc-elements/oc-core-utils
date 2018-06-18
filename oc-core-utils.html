@@ -2,125 +2,137 @@
 <link rel="import" href="oc-store.html">
 <iron-request id="xhr"></iron-request>
 <script>
-    /*
+	/*
  * Ordercloud API Mixin that allows communicating with API.
  * @polymer
  * @mixinFunction
  */
-    Ordercloud = window.Ordercloud || {};
-    Ordercloud.ApiMixin = Polymer.dedupingMixin((superclass) =>
+	Ordercloud = window.Ordercloud || {};
+	Ordercloud.ApiMixin = Polymer.dedupingMixin((superclass) =>
 
-        /*
+		/*
              * @polymer
              * @mixinClass
              */
-        class OCApi extends Ordercloud.ReduxMixin(superclass) {
-            constructor() {
-                super();
-            }
+		class OCApi extends Ordercloud.ReduxMixin(superclass) {
+			constructor() {
+				super();
+			}
 
-            static get properties() {
-                return {
-                    /**
-                     * HTTP error codes for calls
-                     */
-                    _errorCodes: {
-                        type: Array,
-                        readOnly: true,
-                        value: [
-                            {"key": 400, "text": "Bad Request"},
-                            {"key": 401, "text": "Unauthorized"},
-                            {"key": 402, "text": "Payment Required"},
-                            {"key": 403, "text": "Forbidden"},
-                            {"key": 404, "text": "Not Found"},
-                            {"key": 405, "text": "Method Not Allowed"},
-                            {"key": 406, "text": "Not Acceptable"},
-                            {"key": 408, "text": "Request Timeout"},
-                            {"key": 409, "text": "Conflict"},
-                            {"key": 410, "text": "Gone"},
-                            {"key": 411, "text": "Length Required"},
-                            {"key": 412, "text": "Precondition Failed"},
-                            {"key": 413, "text": "Payload Too Large"},
-                            {"key": 414, "text": "URI Too Long"},
-                            {"key": 415, "text": "Unsupported Media Type"},
-                            {"key": 416, "text": "Range Not Satisfiable"},
-                            {"key": 417, "text": "Expectation Failed"},
-                            {"key": 422, "text": "Unprocessable Entity"},
-                            {"key": 423, "text": "Locked"},
-                            {"key": 424, "text": "Failed Dependency"},
-                            {"key": 426, "text": "Upgrade Required"},
-                            {"key": 428, "text": "Precondition Required"},
-                            {"key": 429, "text": "Too Many Requests"},
-                            {"key": 431, "text": "Request Header Fields Too Large"},
-                            {"key": 451, "text": "Unavailable For Legal Reasons"},
-                            {"key": 500, "text": "Internal Server Error"},
-                            {"key": 501, "text": "Not Implemented"},
-                            {"key": 502, "text": "Bad Gateway"},
-                            {"key": 503, "text": "Service Unavailable"},
-                            {"key": 504, "text": "Gateway Time-out"},
-                            {"key": 505, "text": "HTTP Version Not Supported"},
-                            {"key": 506, "text": "Variant Also Negotiates"}
-                        ]
-                    }
+			static get properties() {
+				return {
+					/**
+					 * HTTP error codes for calls
+					 */
+					_errorCodes: {
+						type: Array,
+						readOnly: true,
+						value: [
+							{"key": 400, "text": "Bad Request"},
+							{"key": 401, "text": "Unauthorized"},
+							{"key": 402, "text": "Payment Required"},
+							{"key": 403, "text": "Forbidden"},
+							{"key": 404, "text": "Not Found"},
+							{"key": 405, "text": "Method Not Allowed"},
+							{"key": 406, "text": "Not Acceptable"},
+							{"key": 408, "text": "Request Timeout"},
+							{"key": 409, "text": "Conflict"},
+							{"key": 410, "text": "Gone"},
+							{"key": 411, "text": "Length Required"},
+							{"key": 412, "text": "Precondition Failed"},
+							{"key": 413, "text": "Payload Too Large"},
+							{"key": 414, "text": "URI Too Long"},
+							{"key": 415, "text": "Unsupported Media Type"},
+							{"key": 416, "text": "Range Not Satisfiable"},
+							{"key": 417, "text": "Expectation Failed"},
+							{"key": 422, "text": "Unprocessable Entity"},
+							{"key": 423, "text": "Locked"},
+							{"key": 424, "text": "Failed Dependency"},
+							{"key": 426, "text": "Upgrade Required"},
+							{"key": 428, "text": "Precondition Required"},
+							{"key": 429, "text": "Too Many Requests"},
+							{"key": 431, "text": "Request Header Fields Too Large"},
+							{"key": 451, "text": "Unavailable For Legal Reasons"},
+							{"key": 500, "text": "Internal Server Error"},
+							{"key": 501, "text": "Not Implemented"},
+							{"key": 502, "text": "Bad Gateway"},
+							{"key": 503, "text": "Service Unavailable"},
+							{"key": 504, "text": "Gateway Time-out"},
+							{"key": 505, "text": "HTTP Version Not Supported"},
+							{"key": 506, "text": "Variant Also Negotiates"}
+						]
+					}
 
-                };
-            }
+				};
+			}
 
-            // Element class can define custom element reactions
-            connectedCallback() {
-                super.connectedCallback();
-            }
+			// Element class can define custom element reactions
+			connectedCallback() {
+				super.connectedCallback();
+			}
 
 
-            ready() {
-                super.ready();
-            }
+			ready() {
+				super.ready();
+			}
 
-            /**
-             * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
-             * @param uri un generated uri on containing the path after /resource in api-docs
-             * @returns {string} uri that has the host and /resource prepended
-             */
-            _generateUrl(uri) {
-                return this.getState().config.apiHostUrl + 'resource/' + uri;
-            }
+			/**
+			 * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
+			 * @param uri un generated uri on containing the path after /resource in api-docs
+			 * @returns {string} uri that has the host and /resource prepended
+			 */
+			_generateUrl(uri) {
+				return this.getState().config.apiHostUrl + 'resource/' + uri;
+			}
 
-            _getToken() {
-                return this.getState().identity.token;
-            }
+			_generateKeycloakUrl(uri) {
+				return this.getState().config.authServerUrl + `/admin/realms/${this.getState().config.realm}/` + uri;
+			}
 
-            _normalizeError(request) {
-                if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
-                    throw new ExpiredTokenError("Token is expired! Please log in again.");
-                }
-                if (request.xhr.response && 'message' in request.xhr.response) {
-                    const error = new Error();
-                    throw error.messageData = request.xhr.response
-                }
-                throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
-            }
+			_getToken() {
+				return this.getState().identity.token;
+			}
 
-            _generateRequest(request, marketplace = false) {
-                //check if the call is a marketplace connection
-                let clientId = this.getState().config.clientId;
-                if (!marketplace) {
-                    clientId = Ordercloud.select.clientId(this.getState());
-                }
+			_normalizeError(request) {
+				if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
+					throw new ExpiredTokenError("Token is expired! Please log in again.");
+				}
+				if (request.xhr.response && 'message' in request.xhr.response) {
+					const error = new Error();
+					throw error.messageData = request.xhr.response
+				}
+				throw new Error(this._errorCodes.find(x => x.key === request.xhr.status).text);
+			}
 
-                request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this._getToken();
-                request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
-                let ironRequest = request.generateRequest();
-                request.headers = {};
-                //allows the errors to bubble up and be caught by window.oneError
-                request.bubbles = true;
-                return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
-            }
-        }
-    );
+			_generateRequest(request, marketplace = false) {
+				//check if the call is a marketplace connection
+				let clientId = this.getState().config.clientId;
+				if (!marketplace) {
+					clientId = Ordercloud.select.clientId(this.getState());
+				}
 
-    function ExpiredTokenError() {
-    }
+				request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this._getToken();
+				request.headers['X-Ordercloud-Organisation'] = request.headers['X-Ordercloud-Organisation'] || clientId;
+				let ironRequest = request.generateRequest();
+				request.headers = {};
+				//allows the errors to bubble up and be caught by window.oneError
+				request.bubbles = true;
+				return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+			}
 
-    ExpiredTokenError.prototype = Object.create(Error.prototype);
+			_generateKeycloakRequest(request) {
+				request.headers.Authorization = request.headers.Authorization || 'Bearer ' + this._getToken();
+				let ironRequest = request.generateRequest();
+				//allows the errors to bubble up and be caught by window.oneError
+				request.bubbles = true;
+				return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+			}
+		}
+	);
+
+	function ExpiredTokenError() {
+	}
+
+	ExpiredTokenError.prototype = Object.create(Error.prototype);
 
 </script>
