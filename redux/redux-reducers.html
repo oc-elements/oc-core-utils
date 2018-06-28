@@ -66,7 +66,7 @@
 				case GET_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length,
+						count:  (action.response.items) ? action.response.items.length : 0,
 						total: action.response.cartTotal
 					});
 				default:
