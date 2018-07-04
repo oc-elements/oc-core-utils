@@ -2,6 +2,10 @@
 
 <script>
 
+	// App
+	const START_LOADING = 'START_LOADING';
+	const STOP_LOADING = 'STOP_LOADING';
+
 	//cart
 	const REMOVE_CART_ITEM = 'REMOVE_CART_ITEM';
 	const ADD_CART_ITEM = 'ADD_CART_ITEM';
@@ -44,6 +48,23 @@
 	const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 	(function () {
 
+		function app(state = {
+			loading: false
+		}, action) {
+			switch (action.type) {
+				case START_LOADING:
+					return Object.assign({}, state, {
+						loading: true
+					});
+				case STOP_LOADING:
+					return Object.assign({}, state, {
+						loading: false
+					});
+				default:
+					return state;
+			}
+		}
+
 		function cart(state = {
 						  cartItems: [],
 						  count: 0,
@@ -66,7 +87,7 @@
 				case GET_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count:  (action.response.items) ? action.response.items.length : 0,
+						count: (action.response.items) ? action.response.items.length : 0,
 						total: action.response.cartTotal
 					});
 				default:
@@ -304,6 +325,7 @@
 
 		var Ordercloud = window.Ordercloud || {};
 		Ordercloud.rootReducer = Redux.combineReducers({
+			app,
 			cart,
 			order,
 			identity,

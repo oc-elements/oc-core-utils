@@ -117,7 +117,12 @@
 				request.headers = {};
 				//allows the errors to bubble up and be caught by window.oneError
 				request.bubbles = true;
-				return ironRequest.completes.catch(this._normalizeError.bind(this, ironRequest));
+
+				this.dispatch(Object.assign({}, { type: 'START_LOADING' })	);
+				return ironRequest.completes.then((request) => {
+					this.dispatch(Object.assign({}, { type: 'STOP_LOADING' })	);
+					return request;
+				}).catch(this._normalizeError.bind(this, ironRequest));
 			}
 
 			_generateKeycloakRequest(request) {
@@ -136,3 +141,4 @@
 	ExpiredTokenError.prototype = Object.create(Error.prototype);
 
 </script>
+
