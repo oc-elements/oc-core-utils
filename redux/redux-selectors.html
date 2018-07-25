@@ -1,71 +1,109 @@
 <script src="../../../node_modules/reselect/dist/reselect.js"></script>
 
 <script>
-	var Ordercloud = window.Ordercloud || {};
-	(function () {
+    var Ordercloud = window.Ordercloud || {};
+    (function () {
 
-		const organisation = (state) => state.organisation.clientId;
-		const config = (state) => state.config.clientId;
-		const accounts = (state) => state.accounts;
-		const cart = (state) => state.cart;
+        const organisation = (state) => state.organisation.clientId;
+        const config = (state) => state.config.clientId;
+        const accounts = (state) => state.accounts;
+        const cart = (state) => state.cart;
 
-		/**
-		 * returns the clientId of the organisation if set
-		 * else return the clientID from the config
-		 */
-		const clientId = Reselect.createSelector(
-			[organisation, config],
-			(org_clientId, clientId) => {
-				return ((org_clientId) ? org_clientId : clientId)
-			}
-		);
+        /**
+         * returns the clientId of the organisation if set
+         * else return the clientID from the config
+         */
+        const clientId = Reselect.createSelector(
+            [organisation, config],
+            (org_clientId, clientId) => {
+            return ((org_clientId) ? org_clientId : clientId)
+    }
+    );
 
-		/**
-		 * returns the balance of the ShopToShop account
-		 */
-		const balance = Reselect.createSelector(
-			[accounts],
-			(accounts) => {
-				return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
-			}
-		);
+        /**
+         * returns the balance of the ShopToShop account
+         */
+        const balance = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+            return (accounts.available.length > 0) ? accounts.available.filter(account => account.method === 'System Account').pop().balance : 0;
+    }
+    );
 
 
-		/**
-		 * returns the defaultAccount which is the ShopToShop account
-		 */
-		const defaultAccount = Reselect.createSelector(
-			[accounts],
-			(accounts) => {
-				return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
-			}
-		);
+        /**
+         * returns the defaultAccount which is the ShopToShop account
+         */
+        const defaultAccount = Reselect.createSelector(
+            [accounts],
+            (accounts) => {
+            return (accounts.available) ? accounts.available.filter(account => account.method === 'System Account').pop().id : null;
+    }
+    );
 
-		/* Calculate the total per unit and total quantity */
-		const cartItems = Reselect.createSelector(
-			[cart],
-			(cartData) => {
+        /* Calculate the total per unit and total quantity */
+        const cartItems = Reselect.createSelector(
+            [cart],
+            (cartData) => {
 				if (!cartData.cartItems) return cartData;
 
-				let totalCount = 0;
-				for (let i = 0; i < cartData.cartItems.length; i++) {
-					const product = cartData.cartItems[i];
-					product.total = product.quantity * product.detail.price;
-					totalCount += product.quantity;
-				}
-				cartData.totalCount = totalCount;
+            let totalCount = 0;
+        for (let i = 0; i < cartData.cartItems.length; i++) {
+            const product = cartData.cartItems[i];
+            product.total = product.quantity * product.detail.price;
+            totalCount += product.quantity;
+        }
+        cartData.totalCount = totalCount;
 
-				return cartData;
-			}
-		);
+        return cartData;
+    }
+    );
 
+        const isAccountValid = (actionsArr, actions, types) => {
+            for (let i = 0; i < actionsArr.length; i++) {
+                if (actionsArr[i].enabled && actions.indexOf(actionsArr[i].action) !== -1 && types.indexOf(actionsArr[i].transactionType) !== -1)
+                    return true;
+            }
+            return false;
+        };
 
-		Ordercloud.select = {
-			clientId,
-			balance,
-			defaultAccount,
-			cartItems
-		}
+        const transferWithDrawAccounts = Reselect.createSelector([accounts], (accounts) => {
+            if (!accounts || !accounts.available || accounts.length < 1) return;
+        const availableAccounts = accounts.available;
+        const filteredAccounts = availableAccounts.filter(account => isAccountValid(account.actions, ['withdraw'], ['Transfer']));
+        return filteredAccounts;
+    });
 
-	}());
+        const transferDepositAccounts = Reselect.createSelector([accounts], (accounts) => {
+            if (!accounts || !accounts.available || accounts.length < 1) return;
+        const availableAccounts = accounts.available;
+        const filteredAccounts = availableAccounts.filter(account => isAccountValid(account.actions, ['deposit'], ['Transfer']));
+        return filteredAccounts;
+    });
+
+        const paymentWithDrawAccounts = Reselect.createSelector([accounts], (accounts) => {
+            if (!accounts || !accounts.available || accounts.length < 1) return;
+        const availableAccounts = accounts.available;
+        const filteredAccounts = availableAccounts.filter(account => isAccountValid(account.actions, ['withdraw'], ['Payment']));
+        return filteredAccounts;
+    });
+
+        const paymentDepositAccounts = Reselect.createSelector([accounts], (accounts) => {
+            if (!accounts || !accounts.available || accounts.length < 1) return;
+        const availableAccounts = accounts.available;
+        const filteredAccounts = availableAccounts.filter(account => isAccountValid(account.actions, ['deposit'], ['Payment']));
+        return filteredAccounts;
+    });
+
+        Ordercloud.select = {
+            clientId,
+            balance,
+            defaultAccount,
+            transferWithDrawAccounts,
+            transferDepositAccounts,
+            paymentWithDrawAccounts,
+            paymentDepositAccounts,
+            cartItems
+        }
+    }());
 </script>
