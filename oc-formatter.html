@@ -33,10 +33,10 @@
 
             // Format South African Mobile Number
             formatMobileNumber(number) {
-                if(!number) return;
+                if (!number) return;
 
                 const numbers = number.replace(/\D/g, ''),
-                    char = {0: '(+', 2: ') ', 4: ' ', 7: ' '};
+                    char = { 0: '(+', 2: ') ', 4: ' ', 7: ' ' };
                 number = '';
                 for (let i = 0; i < numbers.length; i++) {
                     number += (char[i] || '') + numbers[i];
@@ -46,7 +46,7 @@
             }
 
             formatMoneyAmount(amount) {
-                if (amount ===undefined) return;
+                if (amount === undefined) return;
                 return `R${this.formatNumber(amount).toFixed(2)
                     .replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
             }
@@ -56,7 +56,7 @@
                     date = new Date(date);
                 }
 
-                return moment(date).format(format || 'DD MMM YYYY HH:ss');
+                return moment(date).format(format || 'DD MMM YYYY HH:mm');
             }
         }
     );
