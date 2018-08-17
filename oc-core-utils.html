@@ -28,38 +28,38 @@
 						type: Array,
 						readOnly: true,
 						value: [
-							{"key": 400, "text": "Bad Request"},
-							{"key": 401, "text": "Unauthorized"},
-							{"key": 402, "text": "Payment Required"},
-							{"key": 403, "text": "Forbidden"},
-							{"key": 404, "text": "Not Found"},
-							{"key": 405, "text": "Method Not Allowed"},
-							{"key": 406, "text": "Not Acceptable"},
-							{"key": 408, "text": "Request Timeout"},
-							{"key": 409, "text": "Conflict"},
-							{"key": 410, "text": "Gone"},
-							{"key": 411, "text": "Length Required"},
-							{"key": 412, "text": "Precondition Failed"},
-							{"key": 413, "text": "Payload Too Large"},
-							{"key": 414, "text": "URI Too Long"},
-							{"key": 415, "text": "Unsupported Media Type"},
-							{"key": 416, "text": "Range Not Satisfiable"},
-							{"key": 417, "text": "Expectation Failed"},
-							{"key": 422, "text": "Unprocessable Entity"},
-							{"key": 423, "text": "Locked"},
-							{"key": 424, "text": "Failed Dependency"},
-							{"key": 426, "text": "Upgrade Required"},
-							{"key": 428, "text": "Precondition Required"},
-							{"key": 429, "text": "Too Many Requests"},
-							{"key": 431, "text": "Request Header Fields Too Large"},
-							{"key": 451, "text": "Unavailable For Legal Reasons"},
-							{"key": 500, "text": "Internal Server Error"},
-							{"key": 501, "text": "Not Implemented"},
-							{"key": 502, "text": "Bad Gateway"},
-							{"key": 503, "text": "Service Unavailable"},
-							{"key": 504, "text": "Gateway Time-out"},
-							{"key": 505, "text": "HTTP Version Not Supported"},
-							{"key": 506, "text": "Variant Also Negotiates"}
+							{ "key": 400, "text": "Bad Request" },
+							{ "key": 401, "text": "Unauthorized" },
+							{ "key": 402, "text": "Payment Required" },
+							{ "key": 403, "text": "Forbidden" },
+							{ "key": 404, "text": "Not Found" },
+							{ "key": 405, "text": "Method Not Allowed" },
+							{ "key": 406, "text": "Not Acceptable" },
+							{ "key": 408, "text": "Request Timeout" },
+							{ "key": 409, "text": "Conflict" },
+							{ "key": 410, "text": "Gone" },
+							{ "key": 411, "text": "Length Required" },
+							{ "key": 412, "text": "Precondition Failed" },
+							{ "key": 413, "text": "Payload Too Large" },
+							{ "key": 414, "text": "URI Too Long" },
+							{ "key": 415, "text": "Unsupported Media Type" },
+							{ "key": 416, "text": "Range Not Satisfiable" },
+							{ "key": 417, "text": "Expectation Failed" },
+							{ "key": 422, "text": "Unprocessable Entity" },
+							{ "key": 423, "text": "Locked" },
+							{ "key": 424, "text": "Failed Dependency" },
+							{ "key": 426, "text": "Upgrade Required" },
+							{ "key": 428, "text": "Precondition Required" },
+							{ "key": 429, "text": "Too Many Requests" },
+							{ "key": 431, "text": "Request Header Fields Too Large" },
+							{ "key": 451, "text": "Unavailable For Legal Reasons" },
+							{ "key": 500, "text": "Internal Server Error" },
+							{ "key": 501, "text": "Not Implemented" },
+							{ "key": 502, "text": "Bad Gateway" },
+							{ "key": 503, "text": "Service Unavailable" },
+							{ "key": 504, "text": "Gateway Time-out" },
+							{ "key": 505, "text": "HTTP Version Not Supported" },
+							{ "key": 506, "text": "Variant Also Negotiates" }
 						]
 					}
 
@@ -94,6 +94,7 @@
 			}
 
 			_normalizeError(request) {
+				this.dispatch(Object.assign({}, { type: 'STOP_LOADING' }));
 				if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
 					throw new ExpiredTokenError("Token is expired! Please log in again.");
 				}
@@ -118,9 +119,9 @@
 				//allows the errors to bubble up and be caught by window.oneError
 				request.bubbles = true;
 
-				this.dispatch(Object.assign({}, { type: 'START_LOADING' })	);
+				this.dispatch(Object.assign({}, { type: 'START_LOADING' }));
 				return ironRequest.completes.then((request) => {
-					this.dispatch(Object.assign({}, { type: 'STOP_LOADING' })	);
+					this.dispatch(Object.assign({}, { type: 'STOP_LOADING' }));
 					return request;
 				}).catch(this._normalizeError.bind(this, ironRequest));
 			}
@@ -141,4 +142,3 @@
 	ExpiredTokenError.prototype = Object.create(Error.prototype);
 
 </script>
-
