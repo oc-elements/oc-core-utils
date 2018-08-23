@@ -438,6 +438,19 @@
 			}
 		}
 
+		function clearCart() {
+			return (dispatch, getState) => {
+				const params = {
+					method: 'DELETE',
+				};
+
+				return dispatch({
+					types: ['', 'CLEAR_CART', ''],
+					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+				})
+			}
+		}
+
 		/* Cart Items */
 		function addToCart(payload) {
 			return (dispatch, getState) => {
@@ -572,6 +585,7 @@
 			fetchAccountsIfNeeded,
 			getCart,
 			removeCartItem,
+			clearCart,
 			addToCart,
 			receiveBalance,
 			receiveNoOrganisation,

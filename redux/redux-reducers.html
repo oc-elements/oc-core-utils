@@ -7,6 +7,7 @@
 	const STOP_LOADING = 'STOP_LOADING';
 
 	//cart
+	const CLEAR_CART = 'CLEAR_CART';
 	const REMOVE_CART_ITEM = 'REMOVE_CART_ITEM';
 	const ADD_CART_ITEM = 'ADD_CART_ITEM';
 	const GET_CART = 'GET_CART';
@@ -72,10 +73,16 @@
 		},
 			action) {
 			switch (action.type) {
-				case REMOVE_CART_ITEM:
+				case CLEAR_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
 						count: (!action.response.items) ? 0 : action.response.items.length,
+						total: action.response.cartTotal
+					});
+				case REMOVE_CART_ITEM:
+					return Object.assign({}, state, {
+						cartItems: action.response.items,
+						count: action.response.items.length,
 						total: action.response.cartTotal
 					});
 				case ADD_CART_ITEM:
