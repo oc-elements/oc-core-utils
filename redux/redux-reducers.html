@@ -66,16 +66,16 @@
 		}
 
 		function cart(state = {
-						  cartItems: [],
-						  count: 0,
-						  total: 0,
-					  },
-					  action) {
+			cartItems: [],
+			count: 0,
+			total: 0,
+		},
+			action) {
 			switch (action.type) {
 				case REMOVE_CART_ITEM:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length,
+						count: (!action.response.items) ? 0 : action.response.items.length,
 						total: action.response.cartTotal
 					});
 				case ADD_CART_ITEM:
@@ -109,14 +109,14 @@
 		}
 
 		function identity(state = {
-							  user: null,
-							  loggedIn: false,
-							  token: null,
-							  didInvalidate: false,
-							  isFetching: false,
-							  marketplace: false
-						  },
-						  action) {
+			user: null,
+			loggedIn: false,
+			token: null,
+			didInvalidate: false,
+			isFetching: false,
+			marketplace: false
+		},
+			action) {
 			switch (action.type) {
 				case INVALIDATE_USER:
 					return Object.assign({}, state, {
@@ -157,15 +157,15 @@
 		}
 
 		function organisation(state = {
-								  profile: null,
-								  clientId: null,
-								  id: null,
-								  default: 0,
-								  didInvalidate: false,
-								  isFetching: false,
-								  hasOrganisation: true
-							  },
-							  action) {
+			profile: null,
+			clientId: null,
+			id: null,
+			default: 0,
+			didInvalidate: false,
+			isFetching: false,
+			hasOrganisation: true
+		},
+			action) {
 			switch (action.type) {
 
 				case INVALIDATE_ORGANISATION:
@@ -211,16 +211,16 @@
 		}
 
 		function accounts(state = {
-							  available: null,
-							  withdraw: null,
-							  deposit: null,
-							  default: 0,
-							  balance: null,
-							  didInvalidate: false,
-							  isFetching: false,
-							  lastUpdated: null
-						  },
-						  action) {
+			available: null,
+			withdraw: null,
+			deposit: null,
+			default: 0,
+			balance: null,
+			didInvalidate: false,
+			isFetching: false,
+			lastUpdated: null
+		},
+			action) {
 			switch (action.type) {
 				case INVALIDATE_ACCOUNTS:
 					return Object.assign({}, state, {
@@ -284,21 +284,21 @@
 		}
 
 		function config(state = {
-							loaded: false,
-							apiHostUrl: "",
-							clientId: "",
-							tokenRedirectUri: "",
-							environment: "",
-							realm: "",
-							authServerUrl: "",
-							sslRequired: "",
-							resource: "",
-							publicClient: true,
-							confidentialPort: 0,
-							featureFlags: {},
-							sentry: ""
-						},
-						action) {
+			loaded: false,
+			apiHostUrl: "",
+			clientId: "",
+			tokenRedirectUri: "",
+			environment: "",
+			realm: "",
+			authServerUrl: "",
+			sslRequired: "",
+			resource: "",
+			publicClient: true,
+			confidentialPort: 0,
+			featureFlags: {},
+			sentry: ""
+		},
+			action) {
 			switch (action.type) {
 				case RECEIVE_CONFIG:
 					return Object.assign({}, state, {
