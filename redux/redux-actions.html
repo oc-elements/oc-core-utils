@@ -26,7 +26,6 @@
 					user: payload,
 					receivedAt: Date.now()
 				});
-				dispatch(getCart());
 			}
 		}
 
@@ -472,7 +471,7 @@
 					userGeo: {},
 					note: "",
 					deliveryService: {},
-					orderSourceChannel: {id: 1},
+					orderSourceChannel: { id: 1 },
 					reference: "Place Order"
 				};
 
@@ -548,7 +547,7 @@
 					confidentialPort: payload.confidentialPort,
 					environment: payload.environment,
 					featureFlags: payload.featureFlags,
-                    sentry: payload.sentry,
+					sentry: payload.sentry,
 					receivedAt: Date.now()
 				});
 
