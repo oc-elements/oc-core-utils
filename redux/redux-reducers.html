@@ -82,19 +82,19 @@
 				case REMOVE_CART_ITEM:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length,
+						count: (!action.response.items) ? 0 : action.response.items.length,
 						total: action.response.cartTotal
 					});
 				case ADD_CART_ITEM:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: action.response.items.length,
+						count: (!action.response.items) ? 0 : action.response.items.length,
 						total: action.response.cartTotal
 					});
 				case GET_CART:
 					return Object.assign({}, state, {
 						cartItems: action.response.items,
-						count: (action.response.items) ? action.response.items.length : 0,
+						count: (!action.response.items) ? 0 : action.response.items.length,
 						total: action.response.cartTotal
 					});
 				default:
