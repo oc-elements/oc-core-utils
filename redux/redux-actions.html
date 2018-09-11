@@ -472,16 +472,18 @@
 			}
 		}
 
-		/* This will only create the order and save the order number to the store */
-		function createOrder() {
+		/* This will only create the order and save the order number to the store
+			geoObject = {type: 'DELIVERY' | 'SELFPICKUP, geo: AddressObject}
+		*/
+		function createOrder(geoObject) {
 			return (dispatch, getState) => {
 				const body = {
 					amount: getState().cart.total,
 					tip: 0,
 					deliveryCost: 0,
 					adminFee: 0,
-					deliveryType: "SELFPICKUP",
-					userGeo: {},
+					deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
+					userGeo: (geoObject && geoObject.geo) ? geoObject.geo : {},
 					note: "",
 					deliveryService: {},
 					orderSourceChannel: { id: 1 },
