@@ -488,7 +488,7 @@
 					deliveryService: {},
 					orderSourceChannel: { id: 1 },
 					reference: "Place Order",
-                    organisationId: (geoObject && geoObject.organisation) ? geoObject.organisation : null
+                    organisation: (geoObject && geoObject.organisation.id) ? geoObject.organisation.id : null
 				};
 
 				const params = {
