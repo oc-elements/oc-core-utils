@@ -1,5 +1,5 @@
 <script src="../bignumber.js/bignumber.min.js"></script>
-<script src="../moment/min/moment.min.js"></script>
+<script src="https://moment.github.io/luxon/global/luxon.min.js"></script>
 
 <script>
     /*
@@ -9,7 +9,6 @@
  */
     Ordercloud = window.Ordercloud || {};
     Ordercloud.Formatter = Polymer.dedupingMixin((superclass) =>
-
         /*
              * @polymer
              * @mixinClass
@@ -51,12 +50,11 @@
                     .replace(/(\d)(?=(\d{3})+\.)/g, '$1 ')}`;// This will add the appropriate spaces
             }
 
-            formatDate(date, format) {
+            formatDate(date, customFormat) {
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
-
-                return moment(date).format(format || 'DD MMM YYYY HH:mm');
+                return luxon.DateTime.fromJSDate(date).toFormat(customFormat || 'dd LLL yyyy HH:mm');
             }
         }
     );
