@@ -1,7 +1,7 @@
 {
   "name": "oc-core-utils",
   "description": "Base element for communicating with the OC API",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "main": "oc-core-utils.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",

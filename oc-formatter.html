@@ -1,5 +1,5 @@
 <script src="../bignumber.js/bignumber.min.js"></script>
-<script src="http://cdn.date-fns.org/v2.0.0-alpha0/date_fns.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/2.0.0-alpha0/date_fns.min.js"></script>
 
 <script>
     /*
@@ -54,9 +54,9 @@
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
-                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                // const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-                if (isSafari) customFormat = 'dd/mm/yyyy';
+                // if (isSafari) customFormat = 'dd/mm/yyyy';
 
                 return dateFns.format(date, customFormat || 'DD MMM YYYY HH:mm');
             }
