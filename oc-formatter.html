@@ -51,14 +51,8 @@
             }
 
             formatDate(date, customFormat) {
-                if (!(date instanceof Date)) {
-                    date = new Date(date);
-                }
-                // const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-                // if (isSafari) customFormat = 'dd/mm/yyyy';
-
-                return dateFns.format(date, customFormat || 'DD MMM YYYY HH:mm');
+                const newdate = dateFns.parse(date);
+                return dateFns.format(newdate, customFormat || 'DD MMM YYYY HH:mm');
             }
         }
     );
