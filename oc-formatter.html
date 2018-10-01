@@ -1,5 +1,5 @@
 <script src="../bignumber.js/bignumber.min.js"></script>
-<script src="https://moment.github.io/luxon/global/luxon.min.js"></script>
+<script src="http://cdn.date-fns.org/v2.0.0-alpha0/date_fns.min.js"></script>
 
 <script>
     /*
@@ -54,7 +54,11 @@
                 if (!(date instanceof Date)) {
                     date = new Date(date);
                 }
-                return luxon.DateTime.fromJSDate(date).toFormat(customFormat || 'dd LLL yyyy HH:mm');
+                const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+                if (isSafari) customFormat = 'dd/mm/yyyy';
+
+                return dateFns.format(date, customFormat || 'DD MMM YYYY HH:mm');
             }
         }
     );
