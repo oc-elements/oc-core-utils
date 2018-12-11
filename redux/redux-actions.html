@@ -482,14 +482,13 @@
 					tip: 0,
 					deliveryCost: 0,
 					adminFee: 0,
-					organisationId: geoObject.organisationId,
+					organisationId: (geoObject && geoObject.address.id) ? geoObject.address.id : null
 					deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
 					address: (geoObject && geoObject.address) ? geoObject.address : {},
 					note: "",
 					deliveryService: null,
 					orderSourceChannel: { id: 1 },
-					reference: "Place Order",
-                    organisation: (geoObject && geoObject.address.id) ? geoObject.address.id : null
+					reference: "Place Order"
 				};
 
 				const params = {
