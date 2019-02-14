@@ -77,12 +77,21 @@
 			}
 
 			/**
-			 * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
-			 * @param uri un generated uri on containing the path after /resource in api-docs
+			 * Generates a valid api url by prepending the host and adding resource/ before the rest of the path
+			 * @param uri an generated uri on containing the path after /resource in api-docs
 			 * @returns {string} uri that has the host and /resource prepended
 			 */
 			_generateUrl(uri) {
 				return this.getState().config.apiHostUrl + 'resource/' + uri;
+			}
+
+			/**
+			 * Generates a valid api url by prepending the host before the rest of the path
+			 * @param uri an generated uri on containing the path
+			 * @returns {string} uri that has the host prepended
+			 */
+			_wsGenerateUrl(uri) {
+				return this.getState().config.apiHostUrl + uri;
 			}
 
 			_generateKeycloakUrl(uri) {

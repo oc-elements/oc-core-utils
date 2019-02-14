@@ -1,5 +1,3 @@
-<link rel="import" href="redux-action-types.js">
-
 <script>
 	var Ordercloud = window.Ordercloud || {};
 	(function () {
@@ -30,7 +28,7 @@
 		}
 
 		/**
-		 * Set the markeplace flag
+		 * Set the marketplace flag
 		 * @param payload true or false
 		 * @returns {{marketplace}}
 		 */
@@ -56,7 +54,7 @@
 		}
 
 		/**
-		 * Set the logged in user
+		 * Set the logged out user
 		 * @returns {{type}}
 		 */
 		function logoutUser() {
@@ -115,7 +113,6 @@
 		/**
 		 * Receive Organisation
 		 */
-
 		function receiveNoOrganisation() {
 			return {
 				type: RECEIVE_NO_ORGANISATION,
@@ -316,10 +313,9 @@
 			}
 		}
 
-
 		/**
 		 *
-		 * receive the balance
+		 * receive the default
 		 * @param state
 		 * @returns {{type, clientId: *, receivedAt: number}}
 		 */
@@ -506,16 +502,14 @@
 			}
 		}
 
-
 		/**
-		 * Generates a valid api url by prepending thhe host and adding resource/ before the rest of the path
+		 * Generates a valid api url by prepending the host and adding resource/ before the rest of the path
 		 * @param uri un generated uri on containing the path after /resource in api-docs
 		 * @returns {string} uri that has the host and /resource prepended
 		 */
 		function _generateUrl(uri, state) {
 			return state.config.apiHostUrl + 'resource/' + uri;
 		}
-
 
 		function _generateRequest(uri, state, marketplace = false) {
 
@@ -542,6 +536,67 @@
 
 		}
 
+		function wsConnect(id) {
+			if (!id) return;
+			return (dispatch, getState) => {
+				let url = _wsGenerateUrl('organisation/' + id + '/balance', getState());
+				dispatch(receiveWSConnect(url));
+			}
+		}
+
+		 function receiveWSConnect(payload) {
+			return dispatch => {
+				dispatch({
+					type: WEBSOCKET_CONNECT,
+					url: payload,
+					receivedAt: Date.now()
+				});
+			}
+		}
+		 function receiveWSDisconnect(payload) {
+			return dispatch => {
+				dispatch({
+					type: WEBSOCKET_DISCONNECT,
+					url: payload,
+					receivedAt: Date.now()
+				});
+			}
+		}
+
+		/*
+		 * Generates a valid api url by prepending the host before the rest of the path
+		 * @param uri un generated uri on containing the path
+		 * @returns {string} uri that has the host prepended
+		 */
+		function _wsGenerateUrl(uri, state) {
+			return state.config.wsApiHostUrl + uri;
+		}
+
+		function _wsGenerateRequest(uri, state, marketplace = false) {
+
+			var myHeaders = new Headers();
+
+			//check if the call is a marketplace connection
+			var client = state.config.clientId;
+			if (!marketplace) {
+				client = Ordercloud.select.clientId(state);
+			}
+
+			myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
+			myHeaders.append('X-Ordercloud-Organisation', client);
+			myHeaders.append('Content-Type', "application/json");
+
+			var myInit = {
+				method: 'GET',
+				headers: myHeaders,
+				mode: 'cors',
+				cache: 'default'
+			};
+
+			return new Request(_wsGenerateUrl(uri, state), myInit);
+
+		}
+
 		/**
 		 *
 		 * @param payload
@@ -552,6 +607,7 @@
 				dispatch({
 					type: RECEIVE_CONFIG,
 					apiHostUrl: payload.apiHostUrl,
+					wsApiHostUrl: payload.wsApiHostUrl,
 					clientId: payload.clientId,
 					organisationId: payload.organisationId,
 					tokenRedirectUri: payload.tokenRedirectUri,
@@ -592,7 +648,10 @@
 			addToCart,
 			receiveBalance,
 			receiveNoOrganisation,
-			receiveMarketplace
+			receiveMarketplace,
+			wsConnect,
+			receiveWSDisconnect,
+			receiveWSConnect
 		}
 
 	}());
