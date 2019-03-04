@@ -563,38 +563,8 @@
 			}
 		}
 
-		/*
-		 * Generates a valid api url by prepending the host before the rest of the path
-		 * @param uri un generated uri on containing the path
-		 * @returns {string} uri that has the host prepended
-		 */
 		function _wsGenerateUrl(uri, state) {
-			return state.config.wsApiHostUrl + uri;
-		}
-
-		function _wsGenerateRequest(uri, state, marketplace = false) {
-
-			var myHeaders = new Headers();
-
-			//check if the call is a marketplace connection
-			var client = state.config.clientId;
-			if (!marketplace) {
-				client = Ordercloud.select.clientId(state);
-			}
-
-			myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
-			myHeaders.append('X-Ordercloud-Organisation', client);
-			myHeaders.append('Content-Type', "application/json");
-
-			var myInit = {
-				method: 'GET',
-				headers: myHeaders,
-				mode: 'cors',
-				cache: 'default'
-			};
-
-			return new Request(_wsGenerateUrl(uri, state), myInit);
-
+			return state.config.wsApiHostUrl + uri + "/access_token/" + state.identity.token;
 		}
 
 		/**

@@ -13,45 +13,44 @@
 				const makeConnection = () => {
 					if(websocket != null) {
 						dispatch({type: 'WEBSOCKET_RECONNECT'});
-        			}
-					// Configure the object
-					websocket = new WebSocket(action.url);
-					
-					// Attach the callbacks
-					websocket.onopen = () => dispatch({ type: 'WEBSOCKET_OPEN' });
-					websocket.onclose = function (event) {
-						dispatch({type: 'WEBSOCKET_CLOSE'});
-    					setTimeout(function() {	makeConnection()}, 5000); // Try to reconnect in 5 seconds
-					};
-					websocket.onmessage = function(msg) {
-						dispatch({type: 'WEBSOCKET_MESSAGE'});
-						return dispatch(
-							Object.assign({}, {}, {
-								type: RECEIVE_BALANCE,
-								balance: msg.data,
-								receivedAt: Date.now()
-							})
-						);
-					};
-					websocket.onerror = function(err) {
-						dispatch({type: 'WEBSOCKET_ERROR'});
-						console.error('Socket encountered error: ', err.message, 'Closing socket');
-					    websocket.close();
-					};
+					}
+					try {
+						websocket = new WebSocket(action.url);
+						websocket.onopen = () => dispatch({ type: 'WEBSOCKET_OPEN' });
+						websocket.onclose = function (event) {
+							dispatch({type: 'WEBSOCKET_CLOSE'});
+							setTimeout(function() {	makeConnection()}, 5000); // Try to reconnect in 5 seconds
+						};
+						websocket.onmessage = function(msg) {
+							dispatch({type: 'WEBSOCKET_MESSAGE'});
+							return dispatch(
+								Object.assign({}, {}, {
+									type: RECEIVE_BALANCE,
+									balance: msg.data,
+									receivedAt: Date.now()
+								})
+							);
+						};
+						websocket.onerror = function(err) {
+							dispatch({type: 'WEBSOCKET_ERROR'});
+							console.error('Socket encountered error: ', err.message, 'Closing socket');
+							websocket.close();
+						};						
+					} catch (error) {
+						console.log("Websocket connection can't be established.", error)
+					}
 				}
 				switch (action.type) {
-					// User request to connect
 					case 'WEBSOCKET_CONNECT':
-					if(websocket != null) {
-						dispatch({type: 'WEBSOCKET_SWITCH_ORG'});
-          				websocket.close();
-						websocket = null;
-        			} else {
-						makeConnection();
-					}	
+						if(websocket != null) {
+							dispatch({type: 'WEBSOCKET_SWITCH_ORG'});
+          					websocket.close();
+							websocket = null;
+        				} else {
+							makeConnection();
+						}	
 					break;
 
-					// User request to disconnect
 					case 'WEBSOCKET_DISCONNECT':
 						if(websocket != null) {
           					websocket.close();
@@ -59,7 +58,7 @@
         				}
 					break;
 
-					default: // We don't really need the default but ...
+					default: 
 					break;
 				};
 
@@ -144,7 +143,6 @@
 					})
 			}
 		};
-
 
 		Ordercloud.middleware = [
 			ReduxThunk.default,
