@@ -45,9 +45,84 @@
 	const REQUEST_WITHDRAW_ACCOUNTS = 'REQUEST_WITHDRAW_ACCOUNTS';
 	const RECEIVE_WITHDRAW_ACCOUNTS = 'RECEIVE_WITHDRAW_ACCOUNTS';
 
+	//websocket
+	// Action types to be dispatched by the user
+	const WEBSOCKET_CONNECT = 'WEBSOCKET_CONNECT';
+	const WEBSOCKET_DISCONNECT = 'WEBSOCKET_DISCONNECT';
+	const WEBSOCKET_RECONNECT = 'WEBSOCKET_RECONNECT';
+	const WEBSOCKET_SWITCH_ORG = 'WEBSOCKET_SWITCH_ORG';
+	const WEBSOCKET_SEND = 'WEBSOCKET_SEND';
+
+	// Action types dispatched by the WebSocket implementation.
+	// These would be caught by reducers or other middleware.
+	const WEBSOCKET_OPEN = 'WEBSOCKET_OPEN';
+	const WEBSOCKET_CLOSE = 'WEBSOCKET_CLOSED';
+	const WEBSOCKET_MESSAGE = 'WEBSOCKET_MESSAGE';
+	const WEBSOCKET_ERROR = 'WEBSOCKET_ERROR';
+	const WEBSOCKET_RECEIVE_BALANCE = 'WEBSOCKET_RECEIVE_BALANCE';
+
 	//config
 	const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 	(function () {
+		
+		function websocket(state = {
+			connectionStatus: "",
+			url: "",
+			receivedAt: null
+		}, action) {
+			switch (action.type) {
+				case WEBSOCKET_CONNECT:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Created",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_DISCONNECT:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Terminated",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_RECONNECT:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Reconnected",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_SWITCH_ORG:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Reconnected due to switch org",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_OPEN:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Opened",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_CLOSE:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Closed",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_MESSAGE:
+					return Object.assign({}, state, {
+						connectionStatus: "Balance Updated",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				case WEBSOCKET_ERROR:
+					return Object.assign({}, state, {
+						connectionStatus: "Connection Error",
+						url: action.url,
+						receivedAt: action.receivedAt
+					});
+				default:
+					return state;
+			}
+		}
 
 		function app(state = {
 			loading: false
@@ -293,6 +368,7 @@
 		function config(state = {
 			loaded: false,
 			apiHostUrl: "",
+			wsApiHostUrl: "",
 			clientId: "",
 			tokenRedirectUri: "",
 			environment: "",
@@ -311,6 +387,7 @@
 					return Object.assign({}, state, {
 						loaded: true,
 						apiHostUrl: action.apiHostUrl,
+						wsApiHostUrl: action.wsApiHostUrl,
 						clientId: action.clientId,
 						organisationId: action.organisationId,
 						tokenRedirectUri: action.tokenRedirectUri,
@@ -338,7 +415,8 @@
 			identity,
 			organisation,
 			accounts,
-			config
+			config,
+			websocket
 		})
 
 	}());

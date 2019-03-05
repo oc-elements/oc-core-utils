@@ -4,7 +4,67 @@
 <script>
 
 	var Ordercloud = window.Ordercloud || {};
+	let websocket = null;
+
 	(function () {
+
+		const wsMiddleware = ({dispatch, getState}) => {
+			return next => action => {
+				const makeConnection = () => {
+					if(websocket != null) {
+						dispatch({type: 'WEBSOCKET_RECONNECT'});
+					}
+					try {
+						websocket = new WebSocket(action.url);
+						websocket.onopen = () => dispatch({ type: 'WEBSOCKET_OPEN' });
+						websocket.onclose = function (event) {
+							dispatch({type: 'WEBSOCKET_CLOSE'});
+							setTimeout(function() {	makeConnection()}, 5000); // Try to reconnect in 5 seconds
+						};
+						websocket.onmessage = function(msg) {
+							dispatch({type: 'WEBSOCKET_MESSAGE'});
+							return dispatch(
+								Object.assign({}, {}, {
+									type: RECEIVE_BALANCE,
+									balance: msg.data,
+									receivedAt: Date.now()
+								})
+							);
+						};
+						websocket.onerror = function(err) {
+							dispatch({type: 'WEBSOCKET_ERROR'});
+							console.error('Socket encountered error: ', err.message, 'Closing socket');
+							websocket.close();
+						};						
+					} catch (error) {
+						console.log("Websocket connection can't be established.", error)
+					}
+				}
+				switch (action.type) {
+					case 'WEBSOCKET_CONNECT':
+						if(websocket != null) {
+							dispatch({type: 'WEBSOCKET_SWITCH_ORG'});
+          					websocket.close();
+							websocket = null;
+        				} else {
+							makeConnection();
+						}	
+					break;
+
+					case 'WEBSOCKET_DISCONNECT':
+						if(websocket != null) {
+          					websocket.close();
+        					websocket = null;
+        				}
+					break;
+
+					default: 
+					break;
+				};
+
+				return next(action);
+			}
+		};
 
 		const callAPIMiddleware = ({dispatch, getState}) => {
 			return next => action => {
@@ -82,12 +142,12 @@
 						);
 					})
 			}
-		}
-
+		};
 
 		Ordercloud.middleware = [
 			ReduxThunk.default,
 			callAPIMiddleware,
+			wsMiddleware
 		]
 	}());
 </script>
