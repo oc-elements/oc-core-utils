@@ -1,540 +1,551 @@
 <script>
-	var Ordercloud = window.Ordercloud || {};
-	(function () {
+    var Ordercloud = window.Ordercloud || {};
+    (function () {
 
 
-		/**
-		 * Gets the logged in user
-		 * @returns {{type}}
-		 */
-		function requestUser() {
-			return {
-				type: REQUEST_USER
-			}
-		}
+        /**
+         * Gets the logged in user
+         * @returns {{type}}
+         */
+        function requestUser() {
+            return {
+                type: REQUEST_USER
+            }
+        }
 
-		/**
-		 * Set the logged in user and then get cart items of user
-		 * @param payload
-		 */
-		function receiveUser(payload) {
-			return dispatch => {
-				dispatch({
-					type: RECEIVE_USER,
-					user: payload,
-					receivedAt: Date.now()
-				});
-			}
-		}
+        /**
+         * Set the logged in user and then get cart items of user
+         * @param payload
+         */
+        function receiveUser(payload) {
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_USER,
+                    user: payload,
+                    receivedAt: Date.now()
+                });
+            }
+        }
 
-		/**
+        /**
 		 * Set the marketplace flag
-		 * @param payload true or false
-		 * @returns {{marketplace}}
-		 */
-		function receiveMarketplace(payload) {
-			return {
-				type: RECEIVE_MARKETPLACE,
-				marketplace: payload
-			}
-		}
+         * @param payload true or false
+         * @returns {{marketplace}}
+         */
+        function receiveMarketplace(payload) {
+            return {
+                type: RECEIVE_MARKETPLACE,
+                marketplace: payload
+            }
+        }
 
-		/**
-		 * Set the logged in user
-		 * @returns {{type}}
-		 */
-		function loginUser(payload) {
-			return dispatch => {
-				dispatch({
-					type: LOGIN_USER,
-					token: payload.token
-				});
-				return Promise.resolve();
-			}
-		}
+        /**
+         * Set the logged in user
+         * @returns {{type}}
+         */
+        function loginUser(payload) {
+            return dispatch => {
+                dispatch({
+                    type: LOGIN_USER,
+                    token: payload.token
+                });
+                return Promise.resolve();
+            }
+        }
 
-		/**
+        /**
 		 * Set the logged out user
-		 * @returns {{type}}
-		 */
-		function logoutUser() {
-			return {
-				type: LOGOUT_USER
-			}
-		}
+         * @returns {{type}}
+         */
+        function logoutUser() {
+            return {
+                type: LOGOUT_USER
+            }
+        }
 
-		/**
-		 * Clear the token
-		 * @returns {{type}}
-		 */
-		function clearToken() {
-			return {
-				type: CLEAR_TOKEN,
-				receivedAt: Date.now()
-			}
-		}
+        /**
+         * Clear the token
+         * @returns {{type}}
+         */
+        function clearToken() {
+            return {
+                type: CLEAR_TOKEN,
+                receivedAt: Date.now()
+            }
+        }
 
-		/**
-		 *
-		 * Invalidate the current account fetch
-		 */
-		function invalidateUser() {
-			return (dispatch) => {
-				dispatch({
-					type: INVALIDATE_USER
-				});
-				// Let the calling code know there's nothing to wait for.
-				return Promise.resolve();
-			}
+        /**
+         *
+         * Invalidate the current account fetch
+         */
+        function invalidateUser() {
+            return (dispatch) => {
+                dispatch({
+                    type: INVALIDATE_USER
+                });
+                // Let the calling code know there's nothing to wait for.
+                return Promise.resolve();
+            }
 
-		}
+        }
 
-		function requestOrganisation() {
-			return {
-				type: REQUEST_ORGANISATION
-			}
-		}
+        function requestOrganisation() {
+            return {
+                type: REQUEST_ORGANISATION
+            }
+        }
 
-		/**
-		 * Set the current organisation
-		 * @param payload
-		 * @returns {{type, profile: *,id : number, receivedAt: number}}
-		 */
-		function receiveOrganisation(payload) {
-			return {
-				type: RECEIVE_ORGANISATION,
-				profile: payload.profile,
-				id: payload.id,
-				receivedAt: Date.now()
-			}
-		}
-
-
-		/**
-		 * Receive Organisation
-		 */
-		function receiveNoOrganisation() {
-			return {
-				type: RECEIVE_NO_ORGANISATION,
-				receivedAt: Date.now()
-			}
-		}
-
-		function fetchOrganisation(id) {
-			return (dispatch, getState) => {
-				dispatch(requestOrganisation());
-				return fetch(_generateRequest('organisations/' + id, getState()))
-					.then(response => response.json())
-					.then(json => dispatch(receiveOrganisation(json)))
-			}
-		}
+        /**
+         * Set the current organisation
+         * @param payload
+         * @returns {{type, profile: *,id : number, receivedAt: number}}
+         */
+        function receiveOrganisation(payload) {
+            return {
+                type: RECEIVE_ORGANISATION,
+                profile: payload.profile,
+                id: payload.id,
+                receivedAt: Date.now()
+            }
+        }
 
 
-		function shouldFetchOrganisation(id, state) {
-			const organisation = state.organisation;
-			if ((!organisation.profile) || (organisation.profile.id !== id)) {
-				return true
-			} else if (organisation.isFetching) {
-				return false
-			} else {
-				return organisation.didInvalidate
-			}
-		}
+        /**
+         * Receive Organisation
+         */
+        function receiveNoOrganisation() {
+            return {
+                type: RECEIVE_NO_ORGANISATION,
+                receivedAt: Date.now()
+            }
+        }
 
-		function fetchOrganisationIfNeeded(id) {
-			// Note that the function also receives getState()
-			// which lets you choose what to dispatch next.
-
-			// This is useful for avoiding a network request if
-			// a cached value is already available.
-
-			return (dispatch, getState) => {
-				if (shouldFetchOrganisation(id, getState())) {
-					// Dispatch a thunk from thunk!
-					return dispatch(fetchOrganisation(id, getState()));
-				} else {
-					// Let the calling code know there's nothing to wait for.
-					return Promise.resolve();
-				}
-			}
-		}
+        function fetchOrganisation(id) {
+            return (dispatch, getState) => {
+                dispatch(requestOrganisation());
+                return fetch(_generateRequest('organisations/' + id, getState()))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveOrganisation(json)))
+            }
+        }
 
 
-		/**
-		 * Clears the organisation data
-		 * @returns {{type}}
-		 */
-		function clearOrganisation() {
-			return {
-				type: CLEAR_ORGANISATION
-			}
-		}
+        function shouldFetchOrganisation(id, state) {
+            const organisation = state.organisation;
+            if ((!organisation.profile) || (organisation.profile.id !== id)) {
+                return true
+            } else if (organisation.isFetching) {
+                return false
+            } else {
+                return organisation.didInvalidate
+            }
+        }
 
-		function requestClientId() {
-			return {
-				type: REQUEST_CLIENT_ID
-			}
-		}
+        function fetchOrganisationIfNeeded(id) {
+            // Note that the function also receives getState()
+            // which lets you choose what to dispatch next.
 
+            // This is useful for avoiding a network request if
+            // a cached value is already available.
 
-		/**
-		 *
-		 * @param payload
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveClientId(payload) {
-			return {
-				type: RECEIVE_CLIENT_ID,
-				clientId: payload,
-				receivedAt: Date.now()
-			}
-		}
-
-
-		function fetchClientId(id) {
-			return (dispatch, getState) => {
-				dispatch(requestClientId());
-				return fetch(_generateRequest('organisations/' + id + '/accesstoken', getState(), true))
-					.then(response => response.json())
-					.then(json => dispatch(receiveClientId(json.token)))
-			}
-		}
+            return (dispatch, getState) => {
+                if (shouldFetchOrganisation(id, getState())) {
+                    // Dispatch a thunk from thunk!
+                    return dispatch(fetchOrganisation(id, getState()));
+                } else {
+                    // Let the calling code know there's nothing to wait for.
+                    return Promise.resolve();
+                }
+            }
+        }
 
 
-		function shouldFetchClientId(state, id) {
-			const organisation = state.organisation;
-			if ((!organisation.clientId) || (organisation.profile.id !== id)) {
-				return true
-			} else if (organisation.isFetching) {
-				return false;
-			} else {
-				return organisation.didInvalidate;
-			}
-		}
+        /**
+         * Clears the organisation data
+         * @returns {{type}}
+         */
+        function clearOrganisation() {
+            return {
+                type: CLEAR_ORGANISATION
+            }
+        }
 
-		function fetchClientIdIfNeeded(id) {
-			// Note that the function also receives getState()
-			// which lets you choose what to dispatch next.
+        function requestClientId() {
+            return {
+                type: REQUEST_CLIENT_ID
+            }
+        }
 
-			// This is useful for avoiding a network request if
-			// a cached value is already available.
 
-			return (dispatch, getState) => {
-				if (shouldFetchClientId(getState(), id)) {
-					// Dispatch a thunk from thunk!
-					return dispatch(fetchClientId(id));
-				} else {
-					// Let the calling code know there's nothing to wait for.
-					return Promise.resolve();
-				}
-			}
-		}
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveClientId(payload) {
+            return {
+                type: RECEIVE_CLIENT_ID,
+                clientId: payload,
+                receivedAt: Date.now()
+            }
+        }
 
-		function requestAccounts() {
-			return {
-				type: REQUEST_ACCOUNTS
-			}
-		}
 
-		function requestDepositAccounts() {
-			return {
-				type: REQUEST_DEPOSIT_ACCOUNTS
-			}
-		}
+        function fetchClientId(id) {
+            return (dispatch, getState) => {
+                dispatch(requestClientId());
+                return fetch(_generateRequest('organisations/' + id + '/accesstoken', getState(), true))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveClientId(json.token)))
+            }
+        }
 
-		function requestWithdrawAccounts() {
-			return {
-				type: REQUEST_WITHDRAW_ACCOUNTS
-			}
-		}
 
-		/**
-		 *
-		 * @param payload
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveAccounts(payload) {
-			return dispatch => {
-				dispatch({
-					type: RECEIVE_ACCOUNTS,
-					accounts: payload,
-					receivedAt: Date.now()
-				});
+        function shouldFetchClientId(state, id) {
+            const organisation = state.organisation;
+            if ((!organisation.clientId) || (organisation.profile.id !== id)) {
+                return true
+            } else if (organisation.isFetching) {
+                return false;
+            } else {
+                return organisation.didInvalidate;
+            }
+        }
 
-				return Promise.resolve();
-			}
-		}
+        function fetchClientIdIfNeeded(id) {
+            // Note that the function also receives getState()
+            // which lets you choose what to dispatch next.
 
-		/**
-		 *
-		 * @param payload
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveDepositAccounts(payload) {
-			return dispatch => {
-				dispatch({
-					type: RECEIVE_DEPOSIT_ACCOUNTS,
-					deposit: payload,
-					receivedAt: Date.now()
-				});
+            // This is useful for avoiding a network request if
+            // a cached value is already available.
 
-				return Promise.resolve();
-			}
-		}
+            return (dispatch, getState) => {
+                if (shouldFetchClientId(getState(), id)) {
+                    // Dispatch a thunk from thunk!
+                    return dispatch(fetchClientId(id));
+                } else {
+                    // Let the calling code know there's nothing to wait for.
+                    return Promise.resolve();
+                }
+            }
+        }
 
-		/**
-		 *
-		 * @param payload
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveWithdrawAccounts(payload) {
-			return dispatch => {
-				dispatch({
-					type: RECEIVE_WITHDRAW_ACCOUNTS,
-					withdraw: payload,
-					receivedAt: Date.now()
-				});
+        function requestAccounts() {
+            return {
+                type: REQUEST_ACCOUNTS
+            }
+        }
 
-				return Promise.resolve();
-			}
-		}
+        function requestDepositAccounts() {
+            return {
+                type: REQUEST_DEPOSIT_ACCOUNTS
+            }
+        }
 
-		/**
-		 *
-		 * receive the balance
-		 * @param state
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveBalance(state) {
-			return {
-				type: RECEIVE_BALANCE,
-				balance: Ordercloud.select.balance(state),
-				receivedAt: Date.now()
-			}
-		}
+        function requestWithdrawAccounts() {
+            return {
+                type: REQUEST_WITHDRAW_ACCOUNTS
+            }
+        }
 
-		/**
-		 *
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveAccounts(payload) {
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_ACCOUNTS,
+                    accounts: payload,
+                    receivedAt: Date.now()
+                });
+
+                return Promise.resolve();
+            }
+        }
+
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveDepositAccounts(payload) {
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_DEPOSIT_ACCOUNTS,
+                    deposit: payload,
+                    receivedAt: Date.now()
+                });
+
+                return Promise.resolve();
+            }
+        }
+
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveWithdrawAccounts(payload) {
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_WITHDRAW_ACCOUNTS,
+                    withdraw: payload,
+                    receivedAt: Date.now()
+                });
+
+                return Promise.resolve();
+            }
+        }
+
+        /**
+         *
+         * receive the balance
+         * @param state
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveBalance(state) {
+            return {
+                type: RECEIVE_BALANCE,
+                balance: Ordercloud.select.balance(state),
+                receivedAt: Date.now()
+            }
+        }
+
+        /**
+         *
 		 * receive the default
-		 * @param state
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveDefault(state) {
-			return (dispatch) => {
-				dispatch({
-					type: RECEIVE_DEFAULT,
-					default: Ordercloud.select.defaultAccount(state),
-					receivedAt: Date.now()
-				});
-				return Promise.resolve();
-			}
+         * @param state
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveDefault(state) {
+            return (dispatch) => {
+                dispatch({
+                    type: RECEIVE_DEFAULT,
+                    default: Ordercloud.select.defaultAccount(state),
+                    receivedAt: Date.now()
+                });
+                return Promise.resolve();
+            }
 
-		}
+        }
 
-		function fetchAccounts(id) {
-			return (dispatch, getState) => {
-				dispatch(requestDepositAccounts());
-				return fetch(_generateRequest('organisations/' + id + '/accounts', getState()))
-					.then(response => response.json())
-					.then(json => dispatch(receiveAccounts(json.results)))
-			}
-		}
+        function fetchAccounts(id) {
+            return (dispatch, getState) => {
+                dispatch(requestDepositAccounts());
+                return fetch(_generateRequest('organisations/' + id + '/accounts', getState()))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveAccounts(json.results)))
+            }
+        }
 
-		function fetchDepositAccounts(id) {
-			return (dispatch, getState) => {
-				dispatch(requestDepositAccounts());
-				return fetch(_generateRequest('organisations/' + id + '/accounts?kind=deposit', getState()))
-					.then(response => response.json())
-					.then(json => dispatch(receiveDepositAccounts(json.results)))
-			}
-		}
+        function fetchDepositAccounts(id) {
+            return (dispatch, getState) => {
+                dispatch(requestDepositAccounts());
+                return fetch(_generateRequest('organisations/' + id + '/accounts?kind=deposit', getState()))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveDepositAccounts(json.results)))
+            }
+        }
 
-		function fetchWithdrawAccounts(id) {
-			return (dispatch, getState) => {
-				dispatch(requestWithdrawAccounts());
-				return fetch(_generateRequest('organisations/' + id + '/accounts?kind=withdraw', getState()))
-					.then(response => response.json())
-					.then(json => dispatch(receiveWithdrawAccounts(json.results)))
-			}
-		}
+        function fetchWithdrawAccounts(id) {
+            return (dispatch, getState) => {
+                dispatch(requestWithdrawAccounts());
+                return fetch(_generateRequest('organisations/' + id + '/accounts?kind=withdraw', getState()))
+                    .then(response => response.json())
+                    .then(json => dispatch(receiveWithdrawAccounts(json.results)))
+            }
+        }
 
-		function shouldFetchAccounts(state) {
-			const accounts = state.accounts;
-			if (!accounts.available) {
-				return true
-			} else if (accounts.isFetching) {
-				return false;
-			} else {
-				return accounts.didInvalidate;
-			}
-		}
+        function shouldFetchAccounts(state) {
+            const accounts = state.accounts;
+            if (!accounts.available) {
+                return true
+            } else if (accounts.isFetching) {
+                return false;
+            } else {
+                return accounts.didInvalidate;
+            }
+        }
 
-		function fetchAccountsIfNeeded(id) {
-			// Note that the function also receives getState()
-			// which lets you choose what to dispatch next.
+        function fetchAccountsIfNeeded(id) {
+            // Note that the function also receives getState()
+            // which lets you choose what to dispatch next.
 
-			// This is useful for avoiding a network request if
-			// a cached value is already available.
+            // This is useful for avoiding a network request if
+            // a cached value is already available.
 
-			return (dispatch, getState) => {
-				if (shouldFetchAccounts(getState())) {
-					// Dispatch a thunk from thunk!
-					return dispatch(fetchAccounts(id))
-						.then(
-							() => Promise.all([
-								dispatch(receiveDefault(getState())),
-								dispatch(fetchWithdrawAccounts(id)),
-								dispatch(fetchDepositAccounts(id))
-							])
-						).then(() => dispatch(receiveBalance(getState())));
-				} else {
-					// Let the calling code know there's nothing to wait for.
-					return Promise.resolve();
-				}
-			}
-		}
+            return (dispatch, getState) => {
+                if (shouldFetchAccounts(getState())) {
+                    // Dispatch a thunk from thunk!
+                    return dispatch(fetchAccounts(id))
+                        .then(
+                            () => Promise.all([
+                                dispatch(receiveDefault(getState())),
+                                dispatch(fetchWithdrawAccounts(id)),
+                                dispatch(fetchDepositAccounts(id))
+                            ])
+                        ).then(() => dispatch(receiveBalance(getState())));
+                } else {
+                    // Let the calling code know there's nothing to wait for.
+                    return Promise.resolve();
+                }
+            }
+        }
 
-		/**
-		 *
-		 * Invalidate the current account fetch
-		 */
-		function invalidateAccounts() {
-			return (dispatch) => {
-				dispatch({
-					type: INVALIDATE_ACCOUNTS
-				});
-				// Let the calling code know there's nothing to wait for.
-				return Promise.resolve();
-			}
+        /**
+         *
+         * Invalidate the current account fetch
+         */
+        function invalidateAccounts() {
+            return (dispatch) => {
+                dispatch({
+                    type: INVALIDATE_ACCOUNTS
+                });
+                // Let the calling code know there's nothing to wait for.
+                return Promise.resolve();
+            }
 
-		}
+        }
 
-		function getCart() {
-			return (dispatch, getState) => {
-				const params = {
-					method: 'GET',
-				};
-				return dispatch({
-					types: ['', 'GET_CART', ''],
-					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
-				})
-			}
-		}
+        function getCart() {
+            return (dispatch, getState) => {
+                const params = {
+                    method: 'GET',
+                };
+                return dispatch({
+                    types: ['', 'GET_CART', ''],
+                    callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+                })
+            }
+        }
 
-		function removeCartItem(payload) {
-			return (dispatch, getState) => {
-				const params = {
-					method: 'DELETE',
-				};
+        function removeCartItem(payload) {
+            return (dispatch, getState) => {
+                const params = {
+                    method: 'DELETE',
+                };
 
-				return dispatch({
-					types: ['', 'REMOVE_CART_ITEM', ''],
-					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub + '/item/' + payload.itemHash, getState()), params)
-				})
-			}
-		}
+                return dispatch({
+                    types: ['', 'REMOVE_CART_ITEM', ''],
+                    callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub + '/item/' + payload.itemHash, getState()), params)
+                })
+            }
+        }
 
-		function clearCart() {
-			return (dispatch, getState) => {
-				const params = {
-					method: 'DELETE',
-				};
+        function clearCart() {
+            return (dispatch, getState) => {
+                const params = {
+                    method: 'DELETE',
+                };
 
-				return dispatch({
-					types: ['', 'CLEAR_CART', ''],
-					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
-				})
-			}
-		}
+                return dispatch({
+                    types: ['', 'CLEAR_CART', ''],
+                    callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+                })
+            }
+        }
 
-		/* Cart Items */
-		function addToCart(payload) {
-			return (dispatch, getState) => {
-				const body = {
-					productId: payload.item.id,
-					optionIds: [],
-					extraIds: [],
-					quantity: payload.quantity
-				};
-				const params = {
-					method: 'PUT',
-					body: JSON.stringify(body),
-				};
+        /* Cart Items */
+        function addToCart(payload) {
+            return (dispatch, getState) => {
+                const body = {};
+                if(payload.options == null) {
+                    this.body = {
+                        productId: payload.item.id,
+                        optionIds: [],
+                        extraIds: [],
+                        quantity: payload.quantity
+                    };
+                }
+                else {
+                    this.body = {
+                        productId: payload.item.id,
+                        optionIds: [payload.options.id],
+                        extraIds: [],
+                        quantity: payload.quantity
+                    };
+                }
+                const params = {
+                    method: 'PUT',
+                    body: JSON.stringify(this.body),
+                };
 
-				return dispatch({
-					types: ['', 'ADD_CART_ITEM', ''],
-					callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
-				})
-			}
-		}
+                return dispatch({
+                    types: ['', 'ADD_CART_ITEM', ''],
+                    callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+                })
+            }
+        }
 
-		/* This will only create the order and save the order number to the store
-			geoObject = {type: 'DELIVERY' | 'SELFPICKUP, address: {id: address_id}}
-		*/
-		function createOrder(geoObject) {
-			return (dispatch, getState) => {
-				const body = {
-					amount: getState().cart.total,
-					tip: 0,
-					deliveryCost: 0,
-					adminFee: 0,
-					organisationId: (geoObject && geoObject.organisationId) ? geoObject.organisationId : null,
-					deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
-					address: (geoObject && geoObject.address) ? geoObject.address : {},
-					note: "",
-					deliveryService: null,
-					orderSourceChannel: { id: 1 },
-					reference: "Place Order"
-				};
+        /* This will only create the order and save the order number to the store
+            geoObject = {type: 'DELIVERY' | 'SELFPICKUP, address: {id: address_id}}
+        */
+        function createOrder(geoObject) {
+            return (dispatch, getState) => {
+                const body = {
+                    amount: getState().cart.total,
+                    tip: 0,
+                    deliveryCost: 0,
+                    adminFee: 0,
+                    organisationId: (geoObject && geoObject.organisationId) ? geoObject.organisationId : null,
+                    deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
+                    address: (geoObject && geoObject.address) ? geoObject.address : {},
+                    note: "",
+                    deliveryService: null,
+                    orderSourceChannel: { id: 1 },
+                    reference: "Place Order"
+                };
 
-				const params = {
-					method: 'POST',
-					body: JSON.stringify(body),
-				};
+                const params = {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                };
 
-				return dispatch({
-					types: ['', 'CREATE_ORDER', ''],
-					callAPI: () => fetch(_generateRequest(`cart/user/${getState().identity.user.sub}/order`, getState()), params)
-				}).then(() => {
-					// Update cart
-					dispatch(getCart());
-				})
-			}
-		}
+                return dispatch({
+                    types: ['', 'CREATE_ORDER', ''],
+                    callAPI: () => fetch(_generateRequest(`cart/user/${getState().identity.user.sub}/order`, getState()), params)
+                }).then(() => {
+                    // Update cart
+                    dispatch(getCart());
+                })
+            }
+        }
 
-		/**
+        /**
 		 * Generates a valid api url by prepending the host and adding resource/ before the rest of the path
-		 * @param uri un generated uri on containing the path after /resource in api-docs
-		 * @returns {string} uri that has the host and /resource prepended
-		 */
-		function _generateUrl(uri, state) {
-			return state.config.apiHostUrl + 'resource/' + uri;
-		}
+         * @param uri un generated uri on containing the path after /resource in api-docs
+         * @returns {string} uri that has the host and /resource prepended
+         */
+        function _generateUrl(uri, state) {
+            return state.config.apiHostUrl + 'resource/' + uri;
+        }
 
-		function _generateRequest(uri, state, marketplace = false) {
+        function _generateRequest(uri, state, marketplace = false) {
 
-			var myHeaders = new Headers();
+            var myHeaders = new Headers();
 
-			//check if the call is a marketplace connection
-			var client = state.config.clientId;
-			if (!marketplace) {
-				client = Ordercloud.select.clientId(state);
-			}
+            //check if the call is a marketplace connection
+            var client = state.config.clientId;
+            if (!marketplace) {
+                client = Ordercloud.select.clientId(state);
+            }
 
-			myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
-			myHeaders.append('X-Ordercloud-Organisation', client);
-			myHeaders.append('Content-Type', "application/json");
+            myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
+            myHeaders.append('X-Ordercloud-Organisation', client);
+            myHeaders.append('Content-Type', "application/json");
 
-			var myInit = {
-				method: 'GET',
-				headers: myHeaders,
-				mode: 'cors',
-				cache: 'default'
-			};
+            var myInit = {
+                method: 'GET',
+                headers: myHeaders,
+                mode: 'cors',
+                cache: 'default'
+            };
 
-			return new Request(_generateUrl(uri, state), myInit);
+            return new Request(_generateUrl(uri, state), myInit);
 
-		}
+        }
 
 		function wsConnect(id) {
 			if (!id) return;
@@ -567,62 +578,62 @@
 			return state.config.wsApiHostUrl + uri + "/access_token/" + state.identity.token;
 		}
 
-		/**
-		 *
-		 * @param payload
-		 * @returns {{type, clientId: *, receivedAt: number}}
-		 */
-		function receiveConfig(payload) {
-			return dispatch => {
-				dispatch({
-					type: RECEIVE_CONFIG,
-					apiHostUrl: payload.apiHostUrl,
+        /**
+         *
+         * @param payload
+         * @returns {{type, clientId: *, receivedAt: number}}
+         */
+        function receiveConfig(payload) {
+            return dispatch => {
+                dispatch({
+                    type: RECEIVE_CONFIG,
+                    apiHostUrl: payload.apiHostUrl,
 					wsApiHostUrl: payload.wsApiHostUrl,
-					clientId: payload.clientId,
-					organisationId: payload.organisationId,
-					tokenRedirectUri: payload.tokenRedirectUri,
-					realm: payload.realm,
-					authServerUrl: payload.authServerUrl,
-					sslRequired: payload.sslRequired,
-					resource: payload.resource,
-					publicClient: payload.publicClient,
-					confidentialPort: payload.confidentialPort,
-					environment: payload.environment,
-					featureFlags: payload.featureFlags,
-					sentry: payload.sentry,
-					receivedAt: Date.now()
-				});
+                    clientId: payload.clientId,
+                    organisationId: payload.organisationId,
+                    tokenRedirectUri: payload.tokenRedirectUri,
+                    realm: payload.realm,
+                    authServerUrl: payload.authServerUrl,
+                    sslRequired: payload.sslRequired,
+                    resource: payload.resource,
+                    publicClient: payload.publicClient,
+                    confidentialPort: payload.confidentialPort,
+                    environment: payload.environment,
+                    featureFlags: payload.featureFlags,
+                    sentry: payload.sentry,
+                    receivedAt: Date.now()
+                });
 
-				return Promise.resolve();
-			}
-		}
+                return Promise.resolve();
+            }
+        }
 
-		Ordercloud.actions = {
-			receiveUser,
-			loginUser,
-			logoutUser,
-			clearToken,
-			createOrder,
-			invalidateUser,
-			receiveOrganisation,
-			clearOrganisation,
-			receiveClientId,
-			receiveConfig,
-			fetchOrganisationIfNeeded,
-			fetchClientIdIfNeeded,
-			invalidateAccounts,
-			fetchAccountsIfNeeded,
-			getCart,
-			removeCartItem,
-			clearCart,
-			addToCart,
-			receiveBalance,
-			receiveNoOrganisation,
+        Ordercloud.actions = {
+            receiveUser,
+            loginUser,
+            logoutUser,
+            clearToken,
+            createOrder,
+            invalidateUser,
+            receiveOrganisation,
+            clearOrganisation,
+            receiveClientId,
+            receiveConfig,
+            fetchOrganisationIfNeeded,
+            fetchClientIdIfNeeded,
+            invalidateAccounts,
+            fetchAccountsIfNeeded,
+            getCart,
+            removeCartItem,
+            clearCart,
+            addToCart,
+            receiveBalance,
+            receiveNoOrganisation,
 			receiveMarketplace,
 			wsConnect,
 			receiveWSDisconnect,
 			receiveWSConnect
-		}
+        }
 
-	}());
+    }());
 </script>
