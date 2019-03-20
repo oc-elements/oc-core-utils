@@ -28,7 +28,7 @@
         }
 
         /**
-		 * Set the marketplace flag
+         * Set the marketplace flag
          * @param payload true or false
          * @returns {{marketplace}}
          */
@@ -54,7 +54,7 @@
         }
 
         /**
-		 * Set the logged out user
+         * Set the logged out user
          * @returns {{type}}
          */
         function logoutUser() {
@@ -315,7 +315,7 @@
 
         /**
          *
-		 * receive the default
+         * receive the default
          * @param state
          * @returns {{type, clientId: *, receivedAt: number}}
          */
@@ -514,7 +514,7 @@
         }
 
         /**
-		 * Generates a valid api url by prepending the host and adding resource/ before the rest of the path
+         * Generates a valid api url by prepending the host and adding resource/ before the rest of the path
          * @param uri un generated uri on containing the path after /resource in api-docs
          * @returns {string} uri that has the host and /resource prepended
          */
@@ -547,36 +547,36 @@
 
         }
 
-		function wsConnect(id) {
-			if (!id) return;
-			return (dispatch, getState) => {
-				let url = _wsGenerateUrl('organisation/' + id + '/balance', getState());
-				dispatch(receiveWSConnect(url));
-			}
-		}
+        function wsConnect(id) {
+            if (!id) return;
+            return (dispatch, getState) => {
+                let url = _wsGenerateUrl('organisation/' + id + '/balance', getState());
+                dispatch(receiveWSConnect(url));
+            }
+        }
 
-		 function receiveWSConnect(payload) {
-			return dispatch => {
-				dispatch({
-					type: WEBSOCKET_CONNECT,
-					url: payload,
-					receivedAt: Date.now()
-				});
-			}
-		}
-		 function receiveWSDisconnect(payload) {
-			return dispatch => {
-				dispatch({
-					type: WEBSOCKET_DISCONNECT,
-					url: payload,
-					receivedAt: Date.now()
-				});
-			}
-		}
+        function receiveWSConnect(payload) {
+            return dispatch => {
+                dispatch({
+                    type: WEBSOCKET_CONNECT,
+                    url: payload,
+                    receivedAt: Date.now()
+                });
+            }
+        }
+        function receiveWSDisconnect(payload) {
+            return dispatch => {
+                dispatch({
+                    type: WEBSOCKET_DISCONNECT,
+                    url: payload,
+                    receivedAt: Date.now()
+                });
+            }
+        }
 
-		function _wsGenerateUrl(uri, state) {
-			return state.config.wsApiHostUrl + uri + "/access_token/" + state.identity.token;
-		}
+        function _wsGenerateUrl(uri, state) {
+            return state.config.wsApiHostUrl + uri + "/access_token/" + state.identity.token;
+        }
 
         /**
          *
@@ -588,7 +588,7 @@
                 dispatch({
                     type: RECEIVE_CONFIG,
                     apiHostUrl: payload.apiHostUrl,
-					wsApiHostUrl: payload.wsApiHostUrl,
+                    wsApiHostUrl: payload.wsApiHostUrl,
                     clientId: payload.clientId,
                     organisationId: payload.organisationId,
                     tokenRedirectUri: payload.tokenRedirectUri,
@@ -629,10 +629,10 @@
             addToCart,
             receiveBalance,
             receiveNoOrganisation,
-			receiveMarketplace,
-			wsConnect,
-			receiveWSDisconnect,
-			receiveWSConnect
+            receiveMarketplace,
+            wsConnect,
+            receiveWSDisconnect,
+            receiveWSConnect
         }
 
     }());
