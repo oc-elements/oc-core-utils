@@ -414,10 +414,12 @@
                 const params = {
                     method: 'GET',
                 };
-                return dispatch({
-                    types: ['', 'GET_CART', ''],
-                    callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
-                })
+                if(getState().identity) {
+                    return dispatch({
+                        types: ['', 'GET_CART', ''],
+                        callAPI: () => fetch(_generateRequest('cart/user/' + getState().identity.user.sub, getState()), params)
+                    })
+                }
             }
         }
 
