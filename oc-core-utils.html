@@ -94,6 +94,10 @@
 				return this.getState().config.apiHostUrl + uri;
 			}
 
+			_generateCardServiceUrl(uri) {
+				return this.getState().config.apiCardServiceHostUrl + 'api/' + uri;
+			}
+
 			_generateKeycloakUrl(uri) {
 				return this.getState().config.authServerUrl + `/admin/realms/${this.getState().config.realm}/` + uri;
 			}
