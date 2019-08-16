@@ -524,6 +524,10 @@
             return state.config.apiHostUrl + 'resource/' + uri;
         }
 
+		function _generateCardServiceUrl(uri, state) {
+			return state.config.apiCardServiceHostUrl + 'api/Terminal' + uri;
+		}
+
         function _generateRequest(uri, state, marketplace = false) {
 
             var myHeaders = new Headers();
@@ -548,6 +552,31 @@
             return new Request(_generateUrl(uri, state), myInit);
 
         }
+
+		function _generateTerminalApiRequest(uri, state, marketplace = false) {
+
+			var myHeaders = new Headers();
+
+			//check if the call is a marketplace connection
+			var client = state.config.clientId;
+			if (!marketplace) {
+				client = Ordercloud.select.clientId(state);
+			}
+
+			myHeaders.append('Authorization', 'Bearer ' + state.identity.token);
+			myHeaders.append('X-Ordercloud-Organisation', client);
+			myHeaders.append('Content-Type', "application/json");
+
+			var myInit = {
+				method: 'GET',
+				headers: myHeaders,
+				mode: 'cors',
+				cache: 'default'
+			};
+
+			return new Request(_generateCardServiceUrl(uri, state), myInit);
+
+		}
 
         function wsConnect(id) {
             if (!id) return;
@@ -590,6 +619,7 @@
                 dispatch({
                     type: RECEIVE_CONFIG,
                     apiHostUrl: payload.apiHostUrl,
+					apiCardServiceHostUrl: payload.apiCardServiceHostUrl,
                     wsApiHostUrl: payload.wsApiHostUrl,
                     clientId: payload.clientId,
                     organisationId: payload.organisationId,
