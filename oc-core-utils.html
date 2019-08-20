@@ -108,6 +108,14 @@
 
 			_normalizeError(request) {
 				this.dispatch(Object.assign({}, { type: 'STOP_LOADING' }));
+				if (request.xhr.response && (request.xhr.response.constructor !== Object)) {
+					const error = new Error();
+					throw error.messageData = request.xhr.response
+				}
+				if (request.xhr.response && (request.xhr.response.TerminalId !== Object)) {
+					const error = new Error();
+					throw error.messageData = request.xhr.response.TerminalId
+				}
 				if (request.xhr.response && 'error' in request.xhr.response && request.xhr.response.error === 'expired_token') {
 					throw new ExpiredTokenError("Token is expired! Please log in again.");
 				}
