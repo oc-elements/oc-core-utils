@@ -47,12 +47,16 @@
 			(cartData) => {
 				if (!cartData.cartItems) return cartData;
 
+
 				let totalCount = 0;
+				let productTotal = 0;
 				for (let i = 0; i < cartData.cartItems.length; i++) {
 					const product = cartData.cartItems[i];
-					product.total = product.quantity * product.detail.price;
+					product.total = product.linePrice;
+					productTotal += product.total;
 					totalCount += product.quantity;
 				}
+
 				cartData.totalCount = totalCount;
 
 				return cartData;
