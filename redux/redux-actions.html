@@ -494,7 +494,40 @@
                     organisationId: (geoObject && geoObject.organisationId) ? geoObject.organisationId : null,
                     deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
                     address: (geoObject && geoObject.address) ? geoObject.address : {},
-                    note: "",
+                    note: geoObject.note,
+                    deliveryService: null,
+                    orderSourceChannel: { id: 1 },
+                    reference: "Place Order"
+                };
+
+                const params = {
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                };
+
+                return dispatch({
+                    types: ['', 'CREATE_ORDER', ''],
+                    callAPI: () => fetch(_generateRequest(`cart/user/${getState().identity.user.sub}/order`, getState()), params)
+                }).then(() => {
+                    // Update cart
+                    dispatch(getCart());
+                })
+            }
+		}
+		 /* This will only create the order and save the order number to the store
+            geoObject = {type: 'DELIVERY' | 'SELFPICKUP, address: {id: address_id}}
+        */
+        function createCustomerOrder(geoObject) {
+            return (dispatch, getState) => {
+                const body = {
+                    amount: getState().cart.total,
+                    tip: 0,
+                    deliveryCost: 0,
+                    adminFee: 0,
+                    organisationId: (geoObject && geoObject.organisationId) ? geoObject.organisationId : null,
+                    deliveryType: (geoObject && geoObject.type) ? geoObject.type : {},
+                    customer: (geoObject && geoObject.customer) ? geoObject.customer : {},
+                    note: geoObject.note,
                     deliveryService: null,
                     orderSourceChannel: { id: 1 },
                     reference: "Place Order"
@@ -645,7 +678,8 @@
             loginUser,
             logoutUser,
             clearToken,
-            createOrder,
+			createOrder,
+			createCustomerOrder,
             invalidateUser,
             receiveOrganisation,
             clearOrganisation,
