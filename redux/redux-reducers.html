@@ -64,7 +64,7 @@
 	//config
 	const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 	(function () {
-		
+
 		function websocket(state = {
 			connectionStatus: "",
 			url: "",
@@ -353,6 +353,11 @@
 						isFetching: false
 
 					});
+				case GET_CART :
+					return Object.assign({}, state, {
+						lastUpdated: action.receivedAt
+				});
+
 				case CLEAR_ACCOUNTS:
 					return Object.assign({}, state, {
 						available: null,
